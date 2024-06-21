@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Services.IServices
 {
-    internal interface INotificationService
+    public interface INotificationService
     {
     }
 }

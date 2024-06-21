@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Services.IServices
 {
-    internal interface IUserService
+    public interface IUserService
     {
         Task<Users> AuthenticateUserAsync(int employeeId, string name);
     }

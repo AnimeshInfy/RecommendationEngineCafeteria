@@ -25,6 +25,7 @@ namespace Domain.Models
         public int Rating { get; set; }
         public DateTime Date { get; set; }
         public Users User { get; set; }
+        public int SentimentScore { get; set; }
         public MenuItems MenuItems { get; set; }
 
     }

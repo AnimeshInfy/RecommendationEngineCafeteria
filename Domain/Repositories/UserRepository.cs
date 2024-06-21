@@ -18,9 +18,21 @@ namespace Domain.Repositories
             _context = context;
         }
 
-        public async Task<Users> AuthenticateUserAsync(int employeeId, string name)
+        public async Task<Users> AuthenticateUserAsync(int id, string name)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == employeeId && u.Name == name);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.Name == name);
+        }
+
+        public string GetUserRole(int id, string name)
+        {
+            string role = "";
+            var user = _context.Users.FirstOrDefault(u => u.Id == id && u.Name == name);
+            if (user == null) 
+            {
+                role = user.Role;
+            }
+            role = "INVALID CREDENTIALS";
+            return role;
         }
     }
 }

@@ -1,17 +1,13 @@
-﻿using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Domain.ModelDTO;
 
 namespace Domain.Services.IServices
 {
-    internal interface IMenuService
+    public interface IMenuService
     {
-        Task<List<MenuItems>> GetMenuItemsAsync();
-        Task AddMenuItemAsync(MenuItems menuItem);
-        Task UpdateMenuItemAsync(MenuItems menuItem);
+        Task AddMenuItemAsync(MenuItemDTO menuItem);
+        Task UpdateMenuItemAsync(MenuItemDTO menuItem);
         Task DeleteMenuItemAsync(int id);
+        Task<IEnumerable<MenuItemDTO>> GetMenuItemsAsync();
     }
 }

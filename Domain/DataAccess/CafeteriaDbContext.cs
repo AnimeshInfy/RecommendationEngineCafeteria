@@ -10,6 +10,8 @@ namespace Domain.DataAccess
 {
     public class CafeteriaDbContext : DbContext
     {
+        public CafeteriaDbContext(DbContextOptions<CafeteriaDbContext> options) : base(options) { }
+
         public DbSet<Users> Users { get; set; }
         public DbSet<MenuItems> MenuItems { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
