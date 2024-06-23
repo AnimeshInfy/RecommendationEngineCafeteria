@@ -34,7 +34,6 @@ class Program
                 services.AddScoped<NotificationRepository, NotificationRepository>();
                 services.AddScoped<IFeedbackService, FeedbackService>();
                 services.AddScoped<IUserService, UserService>();
-                services.AddScoped<ILoginService, LoginService>();
                 services.AddScoped<IMenuService, MenuService>();
                 services.AddScoped<INotificationService, NotificationService>();
                 services.AddScoped<IRecommendationEngineService, RecommendationEngineService>();
