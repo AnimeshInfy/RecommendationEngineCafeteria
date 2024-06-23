@@ -29,11 +29,11 @@ namespace Server.RequestHandler {
                 var user = await _userService.AuthenticateUserAsync(jsonDeserialized.Id, jsonDeserialized.Name);
                 if (user != null)
                 {
-                    return "Logged in successfully";
+                    return "Login successfull";
                 }
                 return "Invalid Credentials";
             }
-            return null; //TEMPORARY I HAVE TO CHANGE IT
+            return "Invalid Request";
         }
     }
 }

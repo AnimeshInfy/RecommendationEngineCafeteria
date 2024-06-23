@@ -27,7 +27,7 @@ class Program
             .ConfigureServices((context, services) =>
             {
                 services.AddDbContext<CafeteriaDbContext>(options =>
-                options.UseSqlServer(@"Server=.;Database=CafeteriaDB;Trusted_Connection=True;"));
+                options.UseSqlServer(@"Server=ITT-ANIMESH-SH\SQLEXPRESS;Database=CafeteriaDB;Trusted_Connection=True;"));
                 services.AddScoped<IFeedbackRepository, FeedbackRepository> ();
                 services.AddScoped<IUserRepository, UserRepository>();
                 services.AddScoped<IMenuItemRepository, MenuItemRepository>();

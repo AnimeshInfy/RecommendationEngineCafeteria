@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Text.Json.Serialization;
-using Domain;
+using System.Threading.Tasks;
 using Domain.ModelDTO;
 using Newtonsoft.Json;
 using Server;
@@ -9,17 +8,26 @@ namespace Admin
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            var client = new SocketClient("127.0.0.1", 8000);
-            Login(client);
-            ShowMenu(client);
+            await Task.Delay(4000);
+            using var client = new SocketClient("127.0.0.1", 8000);
+
+            bool isLoggedIn = await Login(client);
+            if (isLoggedIn)
+            {
+                await ShowMenu(client);
+            }
+            else
+            {
+                Console.WriteLine("Login failed.");
+            }
+
             Console.ReadLine();
         }
 
         public static async Task<bool> Login(SocketClient client)
         {
-            bool loginStatus = false;
             UserDTO user = new UserDTO();
 
             Console.WriteLine("Enter your User Id: ");
@@ -31,58 +39,62 @@ namespace Admin
             string jsonRequest = JsonConvert.SerializeObject(user);
             string request = $"AdminLogin_{jsonRequest}";
 
-            client.SendMessage(request);
-
-            string response = client.ReceiveMessage();
+            string response = await client.CommunicateWithStreamAsync(request);
             Console.WriteLine($"Server response: {response}");
 
-            loginStatus = response.Contains("Login");
-
-            return loginStatus;
+            return response.Contains("Login");
         }
 
-    public static void ShowMenu(SocketClient client)
+        public static async Task ShowMenu(SocketClient client)
         {
             while (true)
             {
-                Console.WriteLine("Admin Menu:\n");
+                Console.WriteLine("\nAdmin Menu:\n");
                 Console.WriteLine("Choose from below options: \n1. View Menu \n2. Add Item \n3. Update Item \n4. Delete Item \n5. Exit");
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
                     case "1":
-                        ViewMenu(client);
+                        await ViewMenu(client);
                         break;
                     case "2":
-                        AddItem(client);
+                        await AddItem(client);
                         break;
                     case "3":
-                        UpdateItem(client);
+                        await UpdateItem(client);
                         break;
                     case "4":
-                        DeleteItem(client);
+                        await DeleteItem(client);
                         break;
                     case "5":
-                        return;
+                        Logout(client);
+                        break;
+                    case "6":
+                        Environment.Exit(0);
+                        break;
                     default:
                         Console.WriteLine("Choose again, Invalid choice");
                         break;
                 }
             }
         }
-
-        public static void ViewMenu(SocketClient client)
+        static void Logout(SocketClient client) 
         {
-            client.SendMessage("ViewMenu");
-            string response = client.ReceiveMessage();
-            Console.WriteLine($"Menu: {response}");
+            Console.WriteLine("User Logged out, Please Login again to continue");
+            Login(client);
         }
 
-        public static void AddItem(SocketClient client)
+        public static async Task ViewMenu(SocketClient client)
+        {
+            string request = "ViewMenu";
+            string response = await client.CommunicateWithStreamAsync(request);
+            var deserializedResponse = JsonConvert.DeserializeObject(response);
+            Console.WriteLine($"Menu: {deserializedResponse}");
+        }
+
+        public static async Task AddItem(SocketClient client)
         {
             MenuItemDTO item = new MenuItemDTO();
-            Console.WriteLine("Enter item Id: ");
-            item.Id = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("Enter item name: ");
             item.Name = Console.ReadLine();
             Console.WriteLine("Enter item description: ");
@@ -97,12 +109,11 @@ namespace Admin
             string jsonRequest = JsonConvert.SerializeObject(item);
             string request = $"AddItem_{jsonRequest}";
 
-            client.SendMessage(request);
-            string response = client.ReceiveMessage();
+            var response = await client.CommunicateWithStreamAsync(request);
             Console.WriteLine($"Server response: {response}");
         }
 
-        public static void UpdateItem(SocketClient client)
+        public static async Task UpdateItem(SocketClient client)
         {
             MenuItemDTO item = new MenuItemDTO();
             Console.WriteLine("Enter item Id: ");
@@ -111,28 +122,28 @@ namespace Admin
             item.Name = Console.ReadLine();
             Console.WriteLine("Enter updated item price: ");
             item.Price = Convert.ToDecimal(Console.ReadLine());
+            Console.WriteLine("Update Availability Status: ");
+            item.IsAvailable = Convert.ToBoolean(Console.ReadLine());
+            Console.WriteLine("Update Meal Type: ");
+            item.MealType = Console.ReadLine();
 
             string jsonRequest = JsonConvert.SerializeObject(item);
             string request = $"UpdateItem_{jsonRequest}";
 
-            client.SendMessage(request);
-            string response = client.ReceiveMessage();
+            var response = await client.CommunicateWithStreamAsync(request);
             Console.WriteLine($"Server response: {response}");
         }
 
-        public static void DeleteItem(SocketClient client)
+        public static async Task DeleteItem(SocketClient client)
         {
             Console.WriteLine("Enter item Id to delete: ");
             int itemId = Convert.ToInt32(Console.ReadLine());
 
             string request = $"DeleteItem_{itemId}";
 
-            client.SendMessage(request);
-            string response = client.ReceiveMessage();
+            var response = await client.CommunicateWithStreamAsync(request);
             Console.WriteLine($"Server response: {response}");
         }
     }
 }
-
-
 

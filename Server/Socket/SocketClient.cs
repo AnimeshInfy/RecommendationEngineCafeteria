@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Server
 {
-    public class SocketClient
+    public class SocketClient : IDisposable
     {
         private TcpClient _client;
         private NetworkStream _stream;
@@ -15,34 +16,30 @@ namespace Server
             {
                 _client = new TcpClient(ipAddress, port);
                 _stream = _client.GetStream();
-                Console.WriteLine("Connected to server.");
-            }
-            catch (Exception ex) 
-            {
-                Console.WriteLine(ex.ToString());
-            }
-                
-        }
-
-        public void SendMessage(string message)
-        {
-            try
-            {
-                byte[] data = Encoding.ASCII.GetBytes(message);
-                _stream.Write(data, 0, data.Length);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());   
+                Console.WriteLine($"Connection error: {ex.Message}");
             }
-          
         }
 
-        public string ReceiveMessage()
+        public async Task<string> CommunicateWithStreamAsync(string message)
         {
-            byte[] buffer = new byte[1024];
-            int bytesRead = _stream.Read(buffer, 0, buffer.Length);
+            const int bufferLength = 4096;
+            byte[] data = Encoding.ASCII.GetBytes(message);
+            await _stream.WriteAsync(data, 0, data.Length);
+
+            byte[] buffer = new byte[bufferLength];
+            int bytesRead = await _stream.ReadAsync(buffer, 0, buffer.Length);
+
             return Encoding.ASCII.GetString(buffer, 0, bytesRead);
+        }
+
+        public void Dispose()
+        {
+            _stream?.Dispose();
+            _client?.Close();
         }
     }
 }
+

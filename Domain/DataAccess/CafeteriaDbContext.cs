@@ -10,6 +10,7 @@ namespace Domain.DataAccess
 {
     public class CafeteriaDbContext : DbContext
     {
+        public CafeteriaDbContext() { } 
         public CafeteriaDbContext(DbContextOptions<CafeteriaDbContext> options) : base(options) { }
 
         public DbSet<Users> Users { get; set; }
@@ -21,7 +22,7 @@ namespace Domain.DataAccess
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionString = "Server=ITT-ANIMESH-SH\\SQLEXPRESS;Database=CafeteriaDB;Trusted_Connection=True;";
-            optionsBuilder.UseSqlServer(connectionString);  
+            optionsBuilder.UseSqlServer(connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
