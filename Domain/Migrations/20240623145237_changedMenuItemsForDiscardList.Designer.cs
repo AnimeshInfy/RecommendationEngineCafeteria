@@ -4,6 +4,7 @@ using Domain.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(CafeteriaDbContext))]
-    partial class CafeteriaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240623145237_changedMenuItemsForDiscardList")]
+    partial class changedMenuItemsForDiscardList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,8 +89,8 @@ namespace Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<double?>("AvgRating")
-                        .HasColumnType("float");
+                    b.Property<string>("AvgRating")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -106,8 +108,8 @@ namespace Domain.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<double?>("SentimentScore")
-                        .HasColumnType("float");
+                    b.Property<string>("SentimentScore")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("isItemUnderDiscardList")
                         .HasColumnType("bit");

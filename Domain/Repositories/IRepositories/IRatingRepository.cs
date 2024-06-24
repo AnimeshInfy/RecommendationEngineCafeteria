@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Services.IServices
+namespace Domain.Repositories.IRepositories
 {
-    public interface IRecommendationEngineService
+    public interface IRatingRepository
     {
-        public Task CalculateSentimentScore();
+        public Task CalculateAverageRatingAsync();
     }
 }

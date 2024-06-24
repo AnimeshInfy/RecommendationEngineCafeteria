@@ -1,4 +1,5 @@
 ﻿using Domain.ModelDTO;
+using Domain.Models;
 using Newtonsoft.Json;
 using Server;
 using System;
@@ -57,8 +58,25 @@ namespace Employee
             }
         }
 
-        private static void ProvideFeedback(SocketClient client)
+        private static async Task ProvideFeedback(SocketClient client)
         {
+            Feedback feedback = new Feedback();
+            feedback.Date = DateTime.Now;
+            Console.WriteLine("\nPlease Provide your feedback");
+            Console.WriteLine("\nEnter your User Id: ");
+            feedback.UserId = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("\nEnter which item you had (Item ID): ");
+            feedback.MenuItemId = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("\nEnter feedback message:");
+            feedback.Comment = Console.ReadLine();
+            Console.WriteLine("\nEnter Rating: ");
+            feedback.Rating = Convert.ToInt32(Console.ReadLine());
+
+            string jsonRequest = JsonConvert.SerializeObject(feedback);
+            string request = $"ProvideFeedback_{jsonRequest}";
+
+            var response = await client.CommunicateWithStreamAsync(request);
+            Console.WriteLine($"Server response: {response}");
         }
 
         private static void VoteForMeals(SocketClient client)

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Services.IServices
 {
-    public interface IRecommendationEngineService
+    public interface IRatingServce
     {
-        public Task CalculateSentimentScore();
+        Task CalculateAverageRatingAsync();
     }
 }

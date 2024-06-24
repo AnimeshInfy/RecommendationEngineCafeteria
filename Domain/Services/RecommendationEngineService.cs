@@ -11,13 +11,17 @@ namespace Domain.Services
 {
     public class RecommendationEngineService : IRecommendationEngineService
     {
-        private readonly RatingCalculator _ratingCalculator;
-        private readonly SentimentAnalysis _sentiment;
-        public RecommendationEngineService(RatingCalculator ratingCalculator, SentimentAnalysis sentiment)
+        private readonly IRatingServce _ratingService;
+        private readonly ISentimentsAnalysisService _sentimentService;
+        public RecommendationEngineService(IRatingServce ratingServce, ISentimentsAnalysisService sentimentService)
         {
-            _ratingCalculator = ratingCalculator;
-            _sentiment = sentiment; 
+            _ratingService = ratingServce;
+            _sentimentService = sentimentService;
         }
-        
+
+        public Task CalculateSentimentScore()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

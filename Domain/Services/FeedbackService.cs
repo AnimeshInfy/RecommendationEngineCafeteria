@@ -1,5 +1,6 @@
 ﻿using Domain.Models;
 using Domain.Repositories;
+using Domain.Repositories.IRepositories;
 using Domain.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using System;
@@ -12,9 +13,9 @@ namespace Domain.Services
 {
     public class FeedbackService : IFeedbackService
     {
-        private readonly FeedbackRepository _feedbackRepository;
+        private readonly IFeedbackRepository _feedbackRepository;
 
-        public FeedbackService(FeedbackRepository feedbackRepository)
+        public FeedbackService(IFeedbackRepository feedbackRepository)
         {
             _feedbackRepository = feedbackRepository;
         }
@@ -25,14 +26,9 @@ namespace Domain.Services
             await _feedbackRepository.AddFeedbackAsync(feedback);
         }
 
-        public Task<List<Feedback>> GetFeedbacksByFeedbackIdAsync(int id)
+        public async Task<List<Feedback>> GetFeedbacksByFeedbackIdAsync(int feedbackId)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Feedback>> GetFeedbacksByIdAsync(int id)
-        {
-            return await _feedbackRepository.GetFeedbacksByFeedbackIdAsync(id);
+            return await _feedbackRepository.GetFeedbacksByFeedbackIdAsync(feedbackId);
         }
 
         public async Task<List<Feedback>> ViewAllFeedbacksAsync()

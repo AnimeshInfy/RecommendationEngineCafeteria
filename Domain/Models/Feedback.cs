@@ -11,6 +11,7 @@ namespace Domain.Models
     public class Feedback
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [ForeignKey("MenuItems")]
         [Required]
@@ -25,8 +26,8 @@ namespace Domain.Models
         public int Rating { get; set; }
         public DateTime Date { get; set; }
         public Users User { get; set; }
-        public int SentimentScore { get; set; }
+        public int? SentimentScore { get; set; }
         public MenuItems MenuItems { get; set; }
-
     }
+
 }

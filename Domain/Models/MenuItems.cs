@@ -20,8 +20,9 @@ namespace Domain.Models
         public decimal Price { get; set; }
         public bool IsAvailable { get; set; }
         public MealType MealType { get; set; }  
-        public string? AvgRating { get; set; }
-        public string? SentimentScore { get; set; }
+        public double? AvgRating { get; set; }
+        public double? SentimentScore { get; set; }
+        public bool? isItemUnderDiscardList { get; set; }   
     }
     public enum MealType
     {

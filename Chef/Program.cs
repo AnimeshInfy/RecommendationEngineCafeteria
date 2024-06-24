@@ -63,6 +63,12 @@ namespace Chef
                         Logout(client);
                         break;
                     case "5":
+                        ViewAllFeedbacks(client);
+                        break;
+                    case "6":
+                        ViewFeedbacksById(client);
+                        break;
+                    case "7":
                         Environment.Exit(0);
                         return;
                     default:
@@ -70,6 +76,16 @@ namespace Chef
                         break;
                 }
             }
+        }
+
+        private static void ViewAllFeedbacks(SocketClient client)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void ViewFeedbacksById(SocketClient client)
+        {
+            throw new NotImplementedException();
         }
 
         public static async Task ViewMenu(SocketClient client)

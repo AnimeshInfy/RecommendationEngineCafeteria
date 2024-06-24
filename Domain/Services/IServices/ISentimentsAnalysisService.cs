@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Services.IServices
 {
-    public interface IRecommendationEngineService
+    public interface ISentimentsAnalysisService
     {
-        public Task CalculateSentimentScore();
+        public Task CalculateSentimentsScore();
+        public Task CalculateIndividualSentimentScore(int feedbackId);
     }
 }

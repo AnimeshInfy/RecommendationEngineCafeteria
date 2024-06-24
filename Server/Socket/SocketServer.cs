@@ -11,15 +11,19 @@ public class SocketServer
     private TcpListener _listener;
     private LoginRequestHandler _loginRequestHandler;
     private MenuRequestHandler _menuHandler;
+    private FeedbackRequestHandler _feedbackHandler;
     private IUserService _userService;
     private IMenuService _menuService;
+    private IFeedbackService _feedbackService;
 
-    public SocketServer(IUserService userService, IMenuService menuService)
+    public SocketServer(IUserService userService, IMenuService menuService, IFeedbackService feedbackService)
     {
         _userService = userService;
         _menuService = menuService;
+        _feedbackService = feedbackService;
         _loginRequestHandler = new LoginRequestHandler(_userService);
         _menuHandler = new MenuRequestHandler(_menuService);
+        _feedbackHandler = new FeedbackRequestHandler(_feedbackService);    
     }
 
     public void Start()
@@ -82,7 +86,10 @@ public class SocketServer
         {
             return await _menuHandler.HandleRequestAsync(request);
         }
-
+        if (request.Contains("ProvideFeedback"))
+        {
+            return await _feedbackHandler.HandleRequestAsync(request);
+        }
         return "Unknown request";
     }
 }

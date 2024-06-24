@@ -34,5 +34,6 @@ namespace Domain.Repositories
         {
             return await _context.Feedbacks.ToListAsync();
         }
+
     }
 }

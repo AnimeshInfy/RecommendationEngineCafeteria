@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Services.IServices
+namespace Domain.ModelDTO
 {
-    public interface IRecommendationEngineService
+    internal class RecommendedItemsDTO
     {
-        public Task CalculateSentimentScore();
     }
 }

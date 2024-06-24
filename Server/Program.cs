@@ -31,12 +31,16 @@ class Program
                 services.AddScoped<IFeedbackRepository, FeedbackRepository> ();
                 services.AddScoped<IUserRepository, UserRepository>();
                 services.AddScoped<IMenuItemRepository, MenuItemRepository>();
-                services.AddScoped<NotificationRepository, NotificationRepository>();
+                services.AddScoped<INotificationRepository, NotificationRepository>();
                 services.AddScoped<IFeedbackService, FeedbackService>();
                 services.AddScoped<IUserService, UserService>();
                 services.AddScoped<IMenuService, MenuService>();
                 services.AddScoped<INotificationService, NotificationService>();
                 services.AddScoped<IRecommendationEngineService, RecommendationEngineService>();
+                services.AddScoped<IRatingRepository, RatingRepository>();
+                services.AddScoped<IRatingServce, RatingService>();
+                services.AddScoped<ISentimentsAnalysisRepository, SentimentsAnalysisRepository>();
+                services.AddScoped<ISentimentsAnalysisService, SentimentsAnalysisService>();
                 services.AddSingleton<SocketServer>();
             });
 }
