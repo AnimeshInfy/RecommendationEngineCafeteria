@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Domain.ModelDTO;
 using Domain.Models;
 
 namespace Domain.Repositories
@@ -10,5 +11,6 @@ namespace Domain.Repositories
         Task AddMenuItemAsync(MenuItems menuItem);
         Task UpdateMenuItemAsync(MenuItems menuItem);
         Task DeleteMenuItemAsync(int id);
+        Task<IEnumerable<MenuItems>> GetRecommendedMenuItemsAsync();
     }
 }

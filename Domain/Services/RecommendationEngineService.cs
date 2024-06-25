@@ -1,4 +1,6 @@
 ﻿using Core.Utilities;
+using Domain.ModelDTO;
+using Domain.Models;
 using Domain.Services.IServices;
 using Domain.Utilities;
 using System;
@@ -13,15 +15,29 @@ namespace Domain.Services
     {
         private readonly IRatingServce _ratingService;
         private readonly ISentimentsAnalysisService _sentimentService;
-        public RecommendationEngineService(IRatingServce ratingServce, ISentimentsAnalysisService sentimentService)
+        private readonly IMenuService _menuService; 
+        public RecommendationEngineService(IRatingServce ratingServce, 
+            ISentimentsAnalysisService sentimentService, IMenuService menuService)
         {
             _ratingService = ratingServce;
             _sentimentService = sentimentService;
+            _menuService = menuService;
         }
 
-        public Task CalculateSentimentScore()
+        public async Task CalculateAvgRating()
         {
-            throw new NotImplementedException();
+            _ratingService.CalculateAverageRatingAsync();
+        }
+
+        public async Task CalculateSentimentScore()
+        {
+            _sentimentService.CalculateSentimentsScore();
+        }
+        public async Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItems()
+        {
+            await CalculateAvgRating();
+            await CalculateAvgRating();
+            return await _menuService.GetRecommendedMenuItemsAsync();
         }
     }
 }

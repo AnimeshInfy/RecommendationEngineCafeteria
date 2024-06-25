@@ -95,9 +95,12 @@ namespace Chef
             var deserializedResponse = JsonConvert.DeserializeObject(response);
             Console.WriteLine($"Menu: {deserializedResponse}");
         }
-        public static void GetRecommmendedItems(SocketClient client)
+        public static async void GetRecommmendedItems(SocketClient client)
         {
-
+            string request = "GetRecommendedMeals";
+            string response = await client.CommunicateWithStreamAsync(request);   
+            var deserializedResponse = JsonConvert.DeserializeObject(response);
+            Console.WriteLine($"Top Recommmended Meals: {deserializedResponse}");
         }
         public static void RollOutItems(SocketClient client)
         {

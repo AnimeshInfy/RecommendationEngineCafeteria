@@ -9,6 +9,5 @@ namespace Domain.Services.IServices
     public interface ISentimentsAnalysisService
     {
         public Task CalculateSentimentsScore();
-        public Task CalculateIndividualSentimentScore(int feedbackId);
     }
 }

@@ -9,5 +9,6 @@ namespace Domain.Services.IServices
         Task UpdateMenuItemAsync(MenuItemDTO menuItem);
         Task DeleteMenuItemAsync(int id);
         Task<IEnumerable<MenuItemDTO>> GetMenuItemsAsync();
+        Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItemsAsync();
     }
 }

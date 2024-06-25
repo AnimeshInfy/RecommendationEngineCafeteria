@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.DataAccess;
 using Domain.Models;
 using Domain.Repositories.IRepositories;
 using Domain.Services.IServices;
-using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services
 {
@@ -18,7 +15,7 @@ namespace Domain.Services
             _ratingRepository = ratingRepository;
         }
 
-        Task IRatingServce.CalculateAverageRatingAsync()
+        public Task CalculateAverageRatingAsync()
         {
             return _ratingRepository.CalculateAverageRatingAsync();
         }

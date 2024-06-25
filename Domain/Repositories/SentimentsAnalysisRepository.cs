@@ -1,11 +1,9 @@
 ﻿using Domain.DataAccess;
 using Domain.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections;
+using Domain.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Repositories
@@ -13,75 +11,84 @@ namespace Domain.Repositories
     public class SentimentsAnalysisRepository : ISentimentsAnalysisRepository
     {
         private readonly CafeteriaDbContext _context;
+
         public SentimentsAnalysisRepository(CafeteriaDbContext context)
         {
             _context = context;
         }
 
-        public async Task CalculateIndividualSentimentScore(int feedbackId)
+        public async Task CalculateSentimentScores()
         {
-            var feedback = _context.Feedbacks.FirstOrDefault(x => x.Id == feedbackId);
+            var feedbacks = await _context.Feedbacks.ToListAsync();
+            var goodSentiments = await _context.Sentiments
+                                               .Where(x => x.Mood == "Positive")
+                                               .Select(x => x.Sentiments)
+                                               .ToListAsync();
+            var badSentiments = await _context.Sentiments
+                                              .Where(x => x.Mood == "Negative")
+                                              .Select(x => x.Sentiments)
+                                              .ToListAsync();
 
-            var sentimentScore = 0;
+            List<string> negativeWords = new List<string> { "Not", "Too", "More", "Could be", "Should be" };
 
-            var goodSentiments = _context.Sentiments.Where(x => x.Mood == "Positive").
-                                 Select(x => x.Sentiments).ToListAsync();
-
-            var badSentiments = _context.Sentiments.Where(x => x.Mood == "Negative").
-                                 Select(x => x.Sentiments).ToListAsync();
-
-            List<string> negativeWords = new List<string> {"Not","Too","More","Could be","Should be" };
-
-            List<string> feedbackList = feedback.Comment.Split(' ').ToList();
-
-            foreach ( var goodSentiment in await goodSentiments)
+            foreach (var feedback in feedbacks)
             {
-                bool hasCommonItems = feedbackList.Any(item => negativeWords.Contains(item));
+                List<string> feedbackWords = feedback.Comment.Split(' ').ToList();
+                bool hasNegativeWord = feedbackWords.Any(word => negativeWords.Contains(word));
 
-                if (feedbackList.Contains(goodSentiment))
+                feedback.SentimentScore = 0;
+
+                foreach (var goodSentiment in goodSentiments)
                 {
-                    if (hasCommonItems)
+                    if (feedbackWords.Contains(goodSentiment))
                     {
-                        feedback.SentimentScore -= 5;
+                        feedback.SentimentScore += hasNegativeWord ? -5 : 5;
+                        await _context.SaveChangesAsync();
+
                     }
-                    feedback.SentimentScore += 5;
+                }
+
+                foreach (var badSentiment in badSentiments)
+                {
+                    if (feedbackWords.Contains(badSentiment))
+                    {
+                        feedback.SentimentScore += hasNegativeWord ? 5 : -5;
+                        await _context.SaveChangesAsync();
+
+                    }
                 }
             }
-            foreach (var badSentiment in await badSentiments)
-            {
-                bool hasCommonItems = feedbackList.Any(item => negativeWords.Contains(item));
 
-                if (feedbackList.Contains(badSentiment))
-                {
-                    if (hasCommonItems)
-                    {
-                        feedback.SentimentScore += 5;
-                    }
-                    feedback.SentimentScore -= 5;
-                }
-            }
-            _context.SaveChangesAsync();
-        }
+            await _context.SaveChangesAsync();
 
-        public async Task CalculateSentimentsScore()
-        {
-            var feedbackGroupByItemId = await _context.Feedbacks
-                                      .GroupBy(u => u.MenuItemId)
-                                      .Select(x => new
+            var feedbackGroupByItemId = feedbacks
+                                      .GroupBy(f => f.MenuItemId)
+                                      .Select(g => new
                                       {
-                                          MenuItemId = x.Key,
-                                          SentimentScoreAvg = x.Average(f => f.SentimentScore)
+                                          MenuItemId = g.Key,
+                                          SentimentScoreAvg = g.Average(f => f.SentimentScore ?? 0)
                                       })
-                                      .ToListAsync();
+                                      .ToList();
 
-            foreach (var group in feedbackGroupByItemId)
+            var menuItemIds = feedbackGroupByItemId.Select(f => f.MenuItemId).ToList();
+            var menuItems = await _context.MenuItems
+                                         .Where(mi => menuItemIds.Contains(mi.Id))
+                                         .ToListAsync();
+
+            foreach (var menuItem in menuItems)
             {
-                var menuItem = await _context.MenuItems.FindAsync(group.MenuItemId);
-                if (menuItem != null)
+                var sentimentScoreAvg = feedbackGroupByItemId
+                                        .FirstOrDefault(f => f.MenuItemId == menuItem.Id)?.SentimentScoreAvg;
+
+                if (sentimentScoreAvg.HasValue)
                 {
-                    menuItem.SentimentScore  = group.SentimentScoreAvg;
+                    menuItem.SentimentScore = sentimentScoreAvg.Value;
+                    await _context.SaveChangesAsync();
+
                 }
             }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

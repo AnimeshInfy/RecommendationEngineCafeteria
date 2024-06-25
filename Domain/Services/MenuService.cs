@@ -46,7 +46,11 @@ namespace Domain.Services
             var menuItems = await _menuItemRepository.GetMenuItemsAsync();
             return menuItems.Select(model => MapModelToDto(model)).ToList();
         }
-
+        public async Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItemsAsync()
+        {
+            var menuItems = await _menuItemRepository.GetRecommendedMenuItemsAsync();
+            return menuItems.Select(model => MapModelToDto(model)).ToList();
+        }
         private MenuItems MapDtoToModel(MenuItemDTO dto)
         {
             return new MenuItems

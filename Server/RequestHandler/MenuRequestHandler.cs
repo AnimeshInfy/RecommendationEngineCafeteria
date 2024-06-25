@@ -8,6 +8,7 @@ namespace Server.RequestHandler
     public class MenuRequestHandler
     {
         private readonly IMenuService _menuService;
+        private readonly IRecommendationEngineService _recommendationEngineService;
 
         public MenuRequestHandler(IMenuService menuService)
         {
@@ -43,7 +44,7 @@ namespace Server.RequestHandler
                 return JsonConvert.SerializeObject(menuItems);
             }
 
-            return null;
+            return "Unknown Request";
         }
     }
 }

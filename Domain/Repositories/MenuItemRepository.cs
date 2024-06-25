@@ -1,4 +1,5 @@
 ﻿using Domain.DataAccess;
+using Domain.ModelDTO;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -43,6 +44,11 @@ namespace Domain.Repositories
                 _context.MenuItems.Remove(menuItem);
                 await _context.SaveChangesAsync();
             }
+        }
+        public async Task<IEnumerable<MenuItems>> GetRecommendedMenuItemsAsync()
+        {
+            var menuItems = await _context.MenuItems.OrderByDescending(x => x.CommonScore).ToListAsync();
+            return menuItems;
         }
     }
 

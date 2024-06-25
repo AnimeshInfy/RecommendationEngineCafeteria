@@ -15,14 +15,18 @@ public class SocketServer
     private IUserService _userService;
     private IMenuService _menuService;
     private IFeedbackService _feedbackService;
+    private IRecommendationEngineService _recommendationEngineService;
+    private RecommendationHandler _recommendationHandler;
 
-    public SocketServer(IUserService userService, IMenuService menuService, IFeedbackService feedbackService)
+    public SocketServer(IUserService userService, IMenuService menuService, IFeedbackService feedbackService, IRecommendationEngineService recommendationEngineService)
     {
         _userService = userService;
         _menuService = menuService;
         _feedbackService = feedbackService;
+        _recommendationEngineService = recommendationEngineService;
         _loginRequestHandler = new LoginRequestHandler(_userService);
         _menuHandler = new MenuRequestHandler(_menuService);
+        _recommendationHandler = new RecommendationHandler(_recommendationEngineService);
         _feedbackHandler = new FeedbackRequestHandler(_feedbackService);    
     }
 
@@ -89,6 +93,10 @@ public class SocketServer
         if (request.Contains("ProvideFeedback"))
         {
             return await _feedbackHandler.HandleRequestAsync(request);
+        }
+        if (request.Contains("GetRecommendedMeals"))
+        {
+            return await _recommendationHandler.GetRecommendedMeals(request);
         }
         return "Unknown request";
     }

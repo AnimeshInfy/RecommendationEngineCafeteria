@@ -8,7 +8,6 @@ namespace Domain.Repositories.IRepositories
 {
     public interface ISentimentsAnalysisRepository
     {
-        public Task CalculateSentimentsScore();
-        public Task CalculateIndividualSentimentScore(int feedbackId);
+        public Task CalculateSentimentScores();
     }
 }

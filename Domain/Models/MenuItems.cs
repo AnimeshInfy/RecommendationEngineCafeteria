@@ -22,6 +22,7 @@ namespace Domain.Models
         public MealType MealType { get; set; }  
         public double? AvgRating { get; set; }
         public double? SentimentScore { get; set; }
+        public double? CommonScore { get; set; }
         public bool? isItemUnderDiscardList { get; set; }   
     }
     public enum MealType

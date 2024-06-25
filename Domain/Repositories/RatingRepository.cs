@@ -20,23 +20,30 @@ namespace Domain.Repositories
         public async Task CalculateAverageRatingAsync()
         {
             var feedbackGroupByItemId = await _context.Feedbacks
-                                      .GroupBy(u => u.MenuItemId)
-                                      .Select(x => new
-                                      {
-                                          MenuItemId = x.Key,
-                                          AverageRating = x.Average(f => f.Rating)
-                                      })
-                                      .ToListAsync();
+                                    .GroupBy(f => f.MenuItemId)
+                                    .Select(g => new
+                                    {
+                                        MenuItemId = g.Key,
+                                        AverageRating = g.Average(f => f.Rating)
+                                    })
+                                    .ToListAsync();
 
-            foreach (var group in feedbackGroupByItemId)
+            var menuItemIds = feedbackGroupByItemId.Select(f => f.MenuItemId).ToList();
+            var menuItems = await _context.MenuItems
+                                         .Where(mi => menuItemIds.Contains(mi.Id))
+                                         .ToListAsync();
+
+            foreach (var menuItem in menuItems)
             {
-                var menuItem = await _context.MenuItems.FindAsync(group.MenuItemId);
-                if (menuItem != null)
+                var averageRating = feedbackGroupByItemId
+                                    .FirstOrDefault(f => f.MenuItemId == menuItem.Id)?.AverageRating;
+
+                if (averageRating.HasValue)
                 {
-                    menuItem.AvgRating = group.AverageRating;
+                    menuItem.AvgRating = averageRating.Value;
+                    await _context.SaveChangesAsync();
                 }
             }
-
             await _context.SaveChangesAsync();
         }
     }
