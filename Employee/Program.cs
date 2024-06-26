@@ -79,12 +79,16 @@ namespace Employee
             Console.WriteLine($"Server response: {response}");
         }
 
-        private static void VoteForMeals(SocketClient client)
+        private async static void VoteForMeals(SocketClient client)
         {
         }
 
-        private static void GetItemsRolledOutByChef(SocketClient client)
+        private async static void GetItemsRolledOutByChef(SocketClient client)
         {
+            string request = "GetRolledOutItems";
+            string response = await client.CommunicateWithStreamAsync(request);
+            var deserializedResponse = JsonConvert.DeserializeObject(response);
+            Console.WriteLine($"Rolled Out Menu: {deserializedResponse}");
         }
 
         public static async Task<bool> Login(SocketClient client)

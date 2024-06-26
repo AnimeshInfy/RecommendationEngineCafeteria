@@ -11,7 +11,8 @@ namespace Domain.Services.IServices
         Task DeleteMenuItemAsync(int id);
         Task<IEnumerable<MenuItemDTO>> GetMenuItemsAsync();
         Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItemsAsync(string noOfRecommendedItems);
-        Task RollOutItems(string[] rollOutIds);
+        Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems();
+        Task RollOutItems(string[] rollOutIds); 
 
     }
 }

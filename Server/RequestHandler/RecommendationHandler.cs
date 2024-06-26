@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Domain.ModelDTO;
+using Domain.Models;
 using Domain.Services;
 using Domain.Services.IServices;
 using Newtonsoft.Json;
@@ -36,6 +37,16 @@ namespace Server.RequestHandler
                 var rollOutIds = a[1].Split(",");
                 await _recommendationEngineService.RollOutItems(rollOutIds);
             }
+        }
+
+        public async Task<string> GetRolledOutItems(string request)
+        {
+            if (request.Contains("GetRolledOutItems"))
+            {
+                var menuItems = await _recommendationEngineService.GetRolledOutItems();
+                return JsonConvert.SerializeObject(menuItems);
+            }
+            return "Unknown request";
         }
     }
 }

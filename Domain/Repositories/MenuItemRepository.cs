@@ -84,6 +84,11 @@ namespace Domain.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<RolledOutItems>> GetRolledOutItems()
+        {
+            return await _context.RolledOutItems.ToListAsync();
+        }
     }
 
 }

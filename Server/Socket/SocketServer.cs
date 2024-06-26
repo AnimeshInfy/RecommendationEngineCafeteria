@@ -102,6 +102,13 @@ public class SocketServer
         {
             await _recommendationHandler.RollOutItems(request);
         }
-        return "Unknown request";
+        if (request.Contains("GetRolledOutItems"))
+        {
+            return await _recommendationHandler.GetRolledOutItems(request);
+        }
+        else
+        {
+            return "Unknown request";
+        }
     }
 }

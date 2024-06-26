@@ -40,6 +40,11 @@ namespace Domain.Services
             return await _menuService.GetRecommendedMenuItemsAsync(noOfRecommendedItems);
         }
 
+        public Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems()
+        {
+            return _menuService.GetRolledOutItems();
+        }
+
         public async Task RollOutItems(string[] rollOutIds)
         {
             await _menuService.RollOutItems(rollOutIds);

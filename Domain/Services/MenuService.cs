@@ -91,5 +91,46 @@ namespace Domain.Services
                 isItemUnderDiscardList = model.isItemUnderDiscardList
             };
         }
+
+        private RolledOutItems MapDtoToModel(RolledOutItemsDTO dto)
+        {
+            return new RolledOutItems
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                RolledOutDate = DateTime.Now,
+                Description = dto.Description,
+                Price = dto.Price,
+                IsAvailable = dto.IsAvailable,
+                MealType = dto.MealType,
+                AvgRating = dto.AvgRating,
+                SentimentScore = dto.SentimentScore,
+                CommonScore = dto.CommonScore,
+                isItemUnderDiscardList = dto.isItemUnderDiscardList
+            };
+        }
+
+        private RolledOutItemsDTO MapModelToDto(RolledOutItems model)
+        {
+            return new RolledOutItemsDTO
+            {
+                Id = model.Id,
+                Name = model.Name,
+                RolledOutDate = DateTime.Now,
+                Description = model.Description,
+                Price = model.Price,
+                IsAvailable = model.IsAvailable,
+                MealType = model.MealType,
+                AvgRating = model.AvgRating,
+                SentimentScore = model.SentimentScore,
+                CommonScore = model.CommonScore,
+                isItemUnderDiscardList = model.isItemUnderDiscardList
+            };
+        }
+        public async Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems()
+        {
+            var menuItems = await _menuItemRepository.GetRolledOutItems();
+            return menuItems.Select(model => MapModelToDto(model)).ToList();
+        }
     }
 }
