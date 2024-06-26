@@ -18,6 +18,7 @@ namespace Domain.DataAccess
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<AllSentiments> Sentiments { get; set; }
+        public DbSet<RolledOutItems> RolledOutItems { get; set; }   
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -1,4 +1,5 @@
 ﻿using Domain.ModelDTO;
+using Domain.Models;
 using Newtonsoft.Json;
 using Server;
 using System;
@@ -97,14 +98,22 @@ namespace Chef
         }
         public static async void GetRecommmendedItems(SocketClient client)
         {
-            string request = "GetRecommendedMeals";
+            Console.WriteLine("\nEnter the number of items you want to fetch from Recommnendation Engine:");
+            var noOfRecommendedItems = Console.ReadLine();
+            string request = $"GetRecommendedMeals_{noOfRecommendedItems}";
             string response = await client.CommunicateWithStreamAsync(request);   
             var deserializedResponse = JsonConvert.DeserializeObject(response);
             Console.WriteLine($"Top Recommmended Meals: {deserializedResponse}");
         }
-        public static void RollOutItems(SocketClient client)
+        public static async void RollOutItems(SocketClient client)
         {
+            Console.WriteLine("\nEnter the Item Id(s) which you want to roll out for next day:");
+            string itemIds = Console.ReadLine();
+            string[] itemIdsArray = itemIds.Split(',');
+            List<int> itemIdsInt = itemIdsArray.Select(int.Parse).ToList();
 
+            string request = $"RollOutItems_{itemIds}";
+            string response = await client.CommunicateWithStreamAsync(request);
         }
         static void Logout(SocketClient client)
         {

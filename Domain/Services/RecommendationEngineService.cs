@@ -26,18 +26,23 @@ namespace Domain.Services
 
         public async Task CalculateAvgRating()
         {
-            _ratingService.CalculateAverageRatingAsync();
+            await _ratingService.CalculateAverageRatingAsync();
         }
 
         public async Task CalculateSentimentScore()
         {
-            _sentimentService.CalculateSentimentsScore();
+            await _sentimentService.CalculateSentimentsScore();
         }
-        public async Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItems()
+        public async Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItems(string noOfRecommendedItems)
         {
             await CalculateAvgRating();
-            await CalculateAvgRating();
-            return await _menuService.GetRecommendedMenuItemsAsync();
+            await CalculateSentimentScore();
+            return await _menuService.GetRecommendedMenuItemsAsync(noOfRecommendedItems);
+        }
+
+        public async Task RollOutItems(string[] rollOutIds)
+        {
+            await _menuService.RollOutItems(rollOutIds);
         }
     }
 }

@@ -98,6 +98,10 @@ public class SocketServer
         {
             return await _recommendationHandler.GetRecommendedMeals(request);
         }
+        if (request.Contains("RollOutItems"))
+        {
+            await _recommendationHandler.RollOutItems(request);
+        }
         return "Unknown request";
     }
 }

@@ -45,10 +45,44 @@ namespace Domain.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-        public async Task<IEnumerable<MenuItems>> GetRecommendedMenuItemsAsync()
+        public async Task<IEnumerable<MenuItems>> GetRecommendedMenuItemsAsync(string noOfRecommendedItems)
         {
-            var menuItems = await _context.MenuItems.OrderByDescending(x => x.CommonScore).ToListAsync();
+            var noOfRecommendedItemsInt = Convert.ToInt32(noOfRecommendedItems);
+            var menuItems = await _context.MenuItems.OrderByDescending(x => x.CommonScore).Take(noOfRecommendedItemsInt).ToListAsync();
             return menuItems;
+        }
+
+        public async Task RollOutItems(string[] rollOutIds)
+        {
+            var rollOutIdsInt = rollOutIds.Select(id => int.Parse(id)).ToArray();
+
+            var rolledOutMenuItems = await _context.MenuItems
+                                                   .Where(x => rollOutIdsInt.Contains(x.Id))
+                                                   .ToListAsync();
+
+            var rolledOutItems = new List<RolledOutItems>();
+
+            foreach (var menuItem in rolledOutMenuItems)
+            {
+                var rolledOutItem = new RolledOutItems
+                {
+                    Name = menuItem.Name,
+                    RolledOutDate = DateTime.Now,
+                    Description = menuItem.Description,
+                    Price = menuItem.Price,
+                    IsAvailable = menuItem.IsAvailable,
+                    MealType = menuItem.MealType,
+                    AvgRating = menuItem.AvgRating,
+                    SentimentScore = menuItem.SentimentScore,
+                    CommonScore = menuItem.CommonScore,
+                    isItemUnderDiscardList = menuItem.isItemUnderDiscardList
+                };
+
+                await _context.RolledOutItems.AddAsync(rolledOutItem);
+                rolledOutItems.Add(rolledOutItem);
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 

@@ -11,6 +11,7 @@ namespace Domain.Repositories
         Task AddMenuItemAsync(MenuItems menuItem);
         Task UpdateMenuItemAsync(MenuItems menuItem);
         Task DeleteMenuItemAsync(int id);
-        Task<IEnumerable<MenuItems>> GetRecommendedMenuItemsAsync();
+        Task<IEnumerable<MenuItems>> GetRecommendedMenuItemsAsync(string noOfRecommendedItems);
+        Task RollOutItems(string[] rollOutIds);
     }
 }

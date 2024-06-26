@@ -12,6 +12,7 @@ namespace Domain.Services.IServices
     {
         Task CalculateSentimentScore();
         Task CalculateAvgRating();
-        Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItems();
+        Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItems(string noOfRecommendedItems);
+        Task RollOutItems(string[] rollOutIds);
     }
 }

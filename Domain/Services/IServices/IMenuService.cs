@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Globalization;
+using System.Threading.Tasks;
 using Domain.ModelDTO;
 
 namespace Domain.Services.IServices
@@ -9,6 +10,8 @@ namespace Domain.Services.IServices
         Task UpdateMenuItemAsync(MenuItemDTO menuItem);
         Task DeleteMenuItemAsync(int id);
         Task<IEnumerable<MenuItemDTO>> GetMenuItemsAsync();
-        Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItemsAsync();
+        Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItemsAsync(string noOfRecommendedItems);
+        Task RollOutItems(string[] rollOutIds);
+
     }
 }

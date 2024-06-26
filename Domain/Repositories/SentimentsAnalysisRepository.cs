@@ -86,6 +86,9 @@ namespace Domain.Repositories
                     await _context.SaveChangesAsync();
 
                 }
+
+                menuItem.CommonScore = (menuItem.AvgRating + menuItem.SentimentScore) / 2;
+                await _context.SaveChangesAsync();
             }
 
             await _context.SaveChangesAsync();

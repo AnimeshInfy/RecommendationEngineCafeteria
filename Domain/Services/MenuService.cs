@@ -46,11 +46,18 @@ namespace Domain.Services
             var menuItems = await _menuItemRepository.GetMenuItemsAsync();
             return menuItems.Select(model => MapModelToDto(model)).ToList();
         }
-        public async Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItemsAsync()
+        
+        public async Task RollOutItems(string[] rolledOutItemsIds)
         {
-            var menuItems = await _menuItemRepository.GetRecommendedMenuItemsAsync();
+            await _menuItemRepository.RollOutItems(rolledOutItemsIds);
+        }
+
+        public async Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItemsAsync(string noOfRecommendedItems)
+        {
+            var menuItems = await _menuItemRepository.GetRecommendedMenuItemsAsync(noOfRecommendedItems);
             return menuItems.Select(model => MapModelToDto(model)).ToList();
         }
+
         private MenuItems MapDtoToModel(MenuItemDTO dto)
         {
             return new MenuItems
@@ -60,7 +67,11 @@ namespace Domain.Services
                 Description = dto.Description,
                 Price = dto.Price,
                 IsAvailable = dto.IsAvailable,
-                MealType = (MealType)Enum.Parse(typeof(MealType), dto.MealType, true)
+                MealType = (MealType)Enum.Parse(typeof(MealType), dto.MealType, true),
+                AvgRating = dto.AvgRating,
+                SentimentScore = dto.SentimentScore,
+                CommonScore = dto.CommonScore,
+                isItemUnderDiscardList = dto.isItemUnderDiscardList
             };
         }
 
@@ -73,7 +84,11 @@ namespace Domain.Services
                 Description = model.Description,
                 Price = model.Price,
                 IsAvailable = model.IsAvailable,
-                MealType = model.MealType.ToString()
+                MealType = model.MealType.ToString(),
+                AvgRating = model.AvgRating,
+                SentimentScore = model.SentimentScore,
+                CommonScore = model.CommonScore,
+                isItemUnderDiscardList = model.isItemUnderDiscardList
             };
         }
     }

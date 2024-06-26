@@ -1,4 +1,5 @@
-﻿using Domain.Services;
+﻿using Domain.Models;
+using Domain.Services;
 using Domain.Services.IServices;
 using Newtonsoft.Json;
 using System;
@@ -20,13 +21,23 @@ namespace Server.RequestHandler
         {
             if (request.Contains("GetRecommendedMeals"))
             {
-                //var a = request.Split('_');
-                //var recommemndedMenu = await _recommendationEngineService.GetRecommendedFoodItems();
-                //return JsonConvert.SerializeObject(recommemndedMenu);
-                var menuItems = await _recommendationEngineService.GetRecommendedMenuItems();
+                var a = request.Split('_');
+                var noOfRecommendedItems = a[1];
+                var menuItems = await _recommendationEngineService.GetRecommendedMenuItems(noOfRecommendedItems);
                 return JsonConvert.SerializeObject(menuItems);
             }
             return "Unknown Request";
         }
+        public async Task RollOutItems(string request)
+        {
+            if (request.Contains("RollOutItems"))
+            {
+                var a = request.Split("_");
+                var rollOutIds = a[1].Split(",");
+                await _recommendationEngineService.RollOutItems(rollOutIds);
+            }
+        }
     }
 }
+
+
