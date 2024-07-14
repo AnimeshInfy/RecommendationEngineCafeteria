@@ -17,7 +17,7 @@ namespace Domain.Services
             _notificationRepository = notificationRepository;
         }
 
-        public Task GetDetailedFeedbackOnDiscardedItems()
+        public Task GetDetailedFeedbackOnDiscardedItems(int foodId)
         {
             throw new NotImplementedException();
         }
@@ -32,9 +32,8 @@ namespace Domain.Services
             return await _notificationRepository.ViewAllNotificationsAsync();
         }
 
-        public async Task<List<Notification>> ViewNotificationsByUserIdAsync()
+        public async Task<List<Notification>> ViewNotificationsByUserIdAsync(int viewerId)
         {
-            int viewerId = Convert.ToInt32(Console.ReadLine());
             return await _notificationRepository.ViewNotificationsByUserIdAsync(viewerId);
         }
     }

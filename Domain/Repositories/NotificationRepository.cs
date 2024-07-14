@@ -35,7 +35,7 @@ namespace Domain.Repositories
                 }
 
                 notification.NotificationDate = DateTime.Now;
-                
+
                 if (isSendToAllUsers == "Y")
                 {
                     List<int> userId = await _context.Users.Select(x => x.Id).ToListAsync();
@@ -57,7 +57,7 @@ namespace Domain.Repositories
             {
                 await Console.Out.WriteLineAsync(ex.Message);
             }
-            
+
         }
 
         public async Task<List<Notification>> ViewAllNotificationsAsync()
@@ -66,7 +66,19 @@ namespace Domain.Repositories
         }
         public async Task<List<Notification>> ViewNotificationsByUserIdAsync(int viewerId)
         {
-            return _context.Notifications.Where(x => x.TargetedUserIdsInt.Contains(viewerId)).ToList();
+            string viewerIdstr = Convert.ToString(viewerId);
+            List<Notification> notifications = await _context.Notifications.ToListAsync();
+            List<Notification> notificationsById = new List<Notification>();
+            var targetIds = await _context.Notifications.Select(x => x.TargetedUserIds).ToListAsync();
+            for (int iterator = 0; iterator < targetIds.Count; iterator++)
+            {
+                var targetId = targetIds[iterator].Split(",");
+                if (targetId.Contains(viewerIdstr))
+                {
+                    notificationsById.Add(notifications[iterator]);  
+                }
+            }
+            return notificationsById;   
         }
     }
 }

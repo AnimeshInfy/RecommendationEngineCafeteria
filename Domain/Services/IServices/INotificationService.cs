@@ -9,9 +9,9 @@ namespace Domain.Services.IServices
 {
     public interface INotificationService
     {
-        Task<List<Notification>> ViewNotificationsByUserIdAsync();
+        Task<List<Notification>> ViewNotificationsByUserIdAsync(int viewerId);
         Task<List<Notification>> ViewAllNotificationsAsync();
         Task SendNotification(string message);
-        Task GetDetailedFeedbackOnDiscardedItems();
+        Task GetDetailedFeedbackOnDiscardedItems(int foodId);
     }
 }

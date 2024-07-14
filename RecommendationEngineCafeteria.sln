@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{A865DE77-BFD9-44DB-84C0-DA48FBF1FE9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Domain\Data.csproj", "{A865DE77-BFD9-44DB-84C0-DA48FBF1FE9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{7F24925D-EBAD-4D56-AD2A-4C3349B196E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{7F24925D-EBAD-4D56-AD2A-4C3349B196E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Admin", "Admin\Admin.csproj", "{4256FD25-7A5C-44B7-9A41-C8BC534E0FB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Admin", "Admin\Admin.csproj", "{4256FD25-7A5C-44B7-9A41-C8BC534E0FB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chef", "Chef\Chef.csproj", "{04ABA8CA-7C41-417F-9266-C2C32C7E1CE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chef", "Chef\Chef.csproj", "{04ABA8CA-7C41-417F-9266-C2C32C7E1CE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Employee", "Employee\Employee.csproj", "{831F46B4-CEF6-4855-9241-EF9E8E63A88C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Employee", "Employee\Employee.csproj", "{831F46B4-CEF6-4855-9241-EF9E8E63A88C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

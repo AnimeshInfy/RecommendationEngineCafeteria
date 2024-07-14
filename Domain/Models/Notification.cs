@@ -15,13 +15,6 @@ namespace Domain.Models
         public int NotificationId { get; set; }
         [Required]
         public string TargetedUserIds { get; set; }
-
-        [NotMapped]
-        public int[] TargetedUserIdsInt
-        {
-            get => TargetedUserIds?.Split(',').Select(int.Parse).ToArray();
-            set => TargetedUserIds = string.Join(",", value);
-        }
         [Required]
         public string Message { get; set; }
         [Required]

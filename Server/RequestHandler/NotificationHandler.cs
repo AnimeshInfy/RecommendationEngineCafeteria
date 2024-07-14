@@ -1,6 +1,7 @@
 ﻿using Domain.Models;
 using Domain.Services;
 using Domain.Services.IServices;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,13 +23,17 @@ namespace Server.RequestHandler
             var a = request.Split("_");
             await _notificationService.SendNotification(a[1]);
         }
-        public async Task ViewNotificationsById(string request)
+        public async Task<List<Notification>> ViewNotificationsById(string request)
         {
-            await _notificationService.ViewNotificationsByUserIdAsync();
+            var notificationInfo = request.Split("_");
+            var notificationsById = await _notificationService.ViewNotificationsByUserIdAsync(Convert.ToInt32(notificationInfo[1]));
+            var js = JsonConvert.SerializeObject(notificationsById);    
+            return notificationsById;
         }
-        public async Task ViewNotifications(string request)
+        public async Task<string> ViewNotifications(string request)
         {
-            await _notificationService.ViewAllNotificationsAsync();
+            var notifications =  await _notificationService.ViewAllNotificationsAsync();
+            return JsonConvert.SerializeObject(notifications);
         }
     }
 }

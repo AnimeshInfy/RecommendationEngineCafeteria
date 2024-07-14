@@ -166,18 +166,15 @@ namespace Employee
 
         public static async Task ViewNotifications(SocketClient client)
         {
-            Console.WriteLine("Enter User Id: \n");
-            int userId = Convert.ToInt32(Console.ReadLine());
-            string request = $"ViewNotifications_{userId}";
+            string request = $"ViewNotifications";
             string response = await client.CommunicateWithStreamAsync(request);
         }
         public static async Task ViewNotificationsByUserId(SocketClient client)
         {
-            Console.WriteLine("Enter User Id: \n");
+            Console.WriteLine("Enter your User Id: \n");
             int userId = Convert.ToInt32(Console.ReadLine());
             string request = $"ViewNotificationsById_{userId}";
             string response = await client.CommunicateWithStreamAsync(request);
         }
-
     }
 }

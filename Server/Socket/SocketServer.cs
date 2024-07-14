@@ -98,21 +98,11 @@ public class SocketServer
             return await _menuHandler.HandleRequestAsync(request);
         }
 
-        if (request.Contains("ProvideFeedback"))
+        if (request.Contains("ProvideFeedback") || request.Contains("ViewFeedbacks")
+            || request.Contains("ViewFeedbacksById"))
         {
             return await _feedbackHandler.HandleRequestAsync(request);
         }
-
-        if (request.Contains("ViewFeedbacks"))
-        {
-            return await _feedbackHandler.HandleRequestAsync(request);
-        }
-
-        if (request.Contains("ViewFeedbacksById"))
-        {
-            return await _feedbackHandler.HandleRequestAsync(request);
-        }
-        //ALL Feedbacks if conditions could be in 1 condition as it will go to same func
 
         if (request.Contains("GetRecommendedMeals"))
         {
@@ -141,17 +131,19 @@ public class SocketServer
             return "Notification sent";
         }
 
-        if (request.Contains("ViewNotifications"))
+        if (request == "ViewNotifications")
         {
-            await _notificationHandler.ViewNotifications(request);
-            return "TEST";
+            return await _notificationHandler.ViewNotifications(request);
         }
         if (request.Contains("ViewNotificationsById"))
         {
             await _notificationHandler.ViewNotificationsById(request);
-            return "TEST";
         }
-        if (request.Contains("DiscardListAction"))
+        if (request.Contains("DeleteItemsFromDiscardList"))
+        {
+            return await _menuHandler.HandleRequestAsync(request);
+        }
+        if (request.Contains("GetDetailedfeedbackonfoodItem"))
         {
             return await _feedbackHandler.HandleRequestAsync(request);
         }

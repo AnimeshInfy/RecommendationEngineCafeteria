@@ -49,7 +49,8 @@ namespace Chef
                 Console.WriteLine("Choose from below options: \n1. View Menu " +
                     "\n2. Get List of recommended meals \n3. Roll Out Food items " +
                     "\n4. Logout \n5. View Feedbacks \n6. View Feedback by food id" +
-                    "\n7. View Max voted items \n8. Send Notifications \n9. Exit");
+                    "\n7. View Max voted items \n8. Send Notifications " +
+                    "\n9. Take actions on Discarded items \n10. Exit");
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
@@ -78,6 +79,9 @@ namespace Chef
                         SendNotifications(client);
                         break;
                     case "9":
+                        TakeActionOnDiscardedMenu(client);
+                        break;
+                    case "10":
                         Environment.Exit(0);
                         return;
                     default:
@@ -159,19 +163,24 @@ namespace Chef
         public static async void TakeActionOnDiscardedMenu(SocketClient client)
         {
             Console.WriteLine("\nDiscarded Menu List: \n");
+            //GET DISCARDED MENU
             Console.WriteLine("Press 1 for getting detailed feedback\n");
             Console.WriteLine("Press 2 for deleting the items from menu\n");
             string action = Console.ReadLine();
+            string request = "DeleteItemsFromDiscardedList";
             if (action == "1")
             {
-                //ask questions
+                await Console.Out.WriteLineAsync("Enter the food id for which you want detailed feedback\n");
+                string foodId = Console.ReadLine();
+                request = $"GetDetailedfeedbackonfoodItem_{foodId}";
             }
             else
             {
-                //delete items
+                await Console.Out.WriteLineAsync("Enter Food id of item which you want to remove:\n");
+                string foodId = Console.ReadLine();
+                request = $"DeleteItemsFromDiscardList_{foodId}";
             }
 
-            string request = $"DiscardListAction_{action}";
             string response = await client.CommunicateWithStreamAsync(request);
         }
     }

@@ -143,11 +143,9 @@ namespace Domain.Services
             await _menuItemRepository.CastVoteAsync(mealType, foodName);    
         }
 
-        public async Task DeleteDiscardedItems()
+        public async Task DeleteDiscardedMenuItemAsync(int id)
         {
-            await Console.Out.WriteLineAsync("Enter the id of item you want to delete");
-            int id = Convert.ToInt32(Console.ReadLine());
-            await _menuItemRepository.DeleteDiscardedMenuItemAsync(id); 
+            await _menuItemRepository.DeleteDiscardedMenuItemAsync(id);
         }
     }
 }

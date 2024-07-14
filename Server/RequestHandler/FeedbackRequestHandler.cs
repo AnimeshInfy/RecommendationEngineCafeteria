@@ -45,17 +45,11 @@ namespace Server.RequestHandler
                 var a = request.Split('_').Select(int.Parse).ToArray();
                 await _feedbackService.GetFeedbacksByFeedbackIdAsync(a[1]);
             }
-            if (request.Contains("DiscardListAction"))
+            if (request.Contains("GetDetailedfeedbackonfoodItem"))
             {
-                var a = request.Split('_');
-                if (a[1] == "1")
-                {
-                    await _notificationService.GetDetailedFeedbackOnDiscardedItems();
-                }
-                else
-                {
-                    await _menuService.DeleteDiscardedItems();
-                }
+                var detailedFeedbackInfo = request.Split('_');
+                int foodId = Convert.ToInt32(detailedFeedbackInfo[1]);
+                await _notificationService.GetDetailedFeedbackOnDiscardedItems(foodId);
             }
             return "Invalid Request";
         }

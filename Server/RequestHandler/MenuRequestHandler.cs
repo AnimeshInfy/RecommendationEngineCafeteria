@@ -31,11 +31,18 @@ namespace Server.RequestHandler
                 await _menuService.UpdateMenuItemAsync(jsonDeserialized);
                 return "Item updated successfully";
             }
-            else if (request.Contains("DeleteItem"))
+            else if (request == "DeleteItem")
             {
                 var a = request.Split('_');
                 int itemId = int.Parse(a[1]);
                 await _menuService.DeleteMenuItemAsync(itemId);
+                return "Item deleted successfully";
+            }
+            else if (request.Contains("DeleteItemsFromDiscardList"))
+            {
+                var a = request.Split('_');
+                int itemId = int.Parse(a[1]);
+                await _menuService.DeleteDiscardedMenuItemAsync(itemId);
                 return "Item deleted successfully";
             }
             else if (request.Contains("ViewMenu"))
