@@ -7,6 +7,8 @@ namespace Domain.Repositories
     public interface INotificationRepository
     {
         Task<List<Notification>> ViewAllNotificationsAsync();
-        void SendNotification();
+        Task SendNotification(string message);
+        Task<List<Notification>> ViewNotificationsByUserIdAsync(int viewerId);
+
     }
 }

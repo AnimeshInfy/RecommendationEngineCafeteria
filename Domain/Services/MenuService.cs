@@ -127,10 +127,27 @@ namespace Domain.Services
                 isItemUnderDiscardList = model.isItemUnderDiscardList
             };
         }
-        public async Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems()
+        public async Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems(DateOnly date)
         {
-            var menuItems = await _menuItemRepository.GetRolledOutItems();
+            var menuItems = await _menuItemRepository.GetRolledOutItems(date);
             return menuItems.Select(model => MapModelToDto(model)).ToList();
+        }
+
+        public async Task ItemsVoting(Dictionary<string, string> mealVotes)
+        {
+            await _menuItemRepository.ItemsVoting(mealVotes);   
+        }
+
+        public async Task CastVoteAsync(string mealType, string foodName)
+        {
+            await _menuItemRepository.CastVoteAsync(mealType, foodName);    
+        }
+
+        public async Task DeleteDiscardedItems()
+        {
+            await Console.Out.WriteLineAsync("Enter the id of item you want to delete");
+            int id = Convert.ToInt32(Console.ReadLine());
+            await _menuItemRepository.DeleteDiscardedMenuItemAsync(id); 
         }
     }
 }

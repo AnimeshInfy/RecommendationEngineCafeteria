@@ -85,9 +85,56 @@ namespace Domain.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<RolledOutItems>> GetRolledOutItems()
+        public async Task<IEnumerable<RolledOutItems>> GetRolledOutItems(DateOnly date)
         {
-            return await _context.RolledOutItems.ToListAsync();
+            date = DateOnly.FromDateTime(DateTime.Now);
+            return await _context.RolledOutItems.Where(x => x.RolledOutDate.Date == 
+            date.ToDateTime(TimeOnly.MinValue).Date).ToListAsync();
+        }
+
+        public async Task ItemsVoting(Dictionary<string, string> mealVotes)
+        {
+            foreach (var vote in mealVotes)
+            {
+                string mealType = vote.Key;
+                string mealName = vote.Value;
+
+                await CastVoteAsync(mealType, mealName);
+            }
+        }
+
+        public async Task CastVoteAsync(string mealType, string foodName)
+        {
+            var date = DateOnly.FromDateTime(DateTime.Now);
+            Console.WriteLine("\nEnter your vote: ");
+            Console.WriteLine("Enter your user id: ");
+            int userId = Convert.ToInt32(Console.ReadLine());   
+
+            var vote = new VotedItems
+            {
+                Date = date.ToDateTime(TimeOnly.MinValue).Date,
+                MealTypes = mealType,
+                FoodName = foodName,
+                UserId = userId
+            };
+
+            _context.VotedItems.Add(vote);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteDiscardedMenuItemAsync(int id)
+        {
+            var discardedMenuItem = await _context.MenuItems.FirstOrDefaultAsync(x => x.isItemUnderDiscardList == true
+            && x.Id == id);
+            if (discardedMenuItem != null)
+            {
+                _context.MenuItems.Remove(discardedMenuItem);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                await Console.Out.WriteLineAsync("\nRecord not found");
+            }
         }
     }
 

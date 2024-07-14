@@ -25,5 +25,6 @@ namespace Domain.Models
         public double? SentimentScore { get; set; }
         public double? CommonScore { get; set; }
         public bool? isItemUnderDiscardList { get; set; }
+        public int? VoteCount { get; set; }
     }
 }

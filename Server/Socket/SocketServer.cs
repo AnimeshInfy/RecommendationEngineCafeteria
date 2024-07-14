@@ -14,20 +14,26 @@ public class SocketServer
     private FeedbackRequestHandler _feedbackHandler;
     private IUserService _userService;
     private IMenuService _menuService;
+    private INotificationService _notificationService;  
     private IFeedbackService _feedbackService;
     private IRecommendationEngineService _recommendationEngineService;
     private RecommendationHandler _recommendationHandler;
+    private NotificationHandler _notificationHandler;
 
-    public SocketServer(IUserService userService, IMenuService menuService, IFeedbackService feedbackService, IRecommendationEngineService recommendationEngineService)
+    public SocketServer(IUserService userService, IMenuService menuService, 
+        IFeedbackService feedbackService, IRecommendationEngineService recommendationEngineService,
+        INotificationService notificationService)
     {
         _userService = userService;
         _menuService = menuService;
         _feedbackService = feedbackService;
         _recommendationEngineService = recommendationEngineService;
+        _notificationService = notificationService;
         _loginRequestHandler = new LoginRequestHandler(_userService);
         _menuHandler = new MenuRequestHandler(_menuService);
-        _recommendationHandler = new RecommendationHandler(_recommendationEngineService);
-        _feedbackHandler = new FeedbackRequestHandler(_feedbackService);    
+        _recommendationHandler = new RecommendationHandler(_recommendationEngineService, _menuService);
+        _feedbackHandler = new FeedbackRequestHandler(_feedbackService, _notificationService, _menuService);
+        _notificationHandler = new NotificationHandler(_notificationService);
     }
 
     public void Start()
@@ -86,25 +92,68 @@ public class SocketServer
             return await _loginRequestHandler.HandleRequestAsync(request);
         }
 
-        if (request.StartsWith("ViewMenu") || request.StartsWith("AddItem") || request.StartsWith("UpdateItem") || request.StartsWith("DeleteItem"))
+        if (request.StartsWith("ViewMenu") || request.StartsWith("AddItem") 
+            || request.StartsWith("UpdateItem") || request.StartsWith("DeleteItem"))
         {
             return await _menuHandler.HandleRequestAsync(request);
         }
+
         if (request.Contains("ProvideFeedback"))
         {
             return await _feedbackHandler.HandleRequestAsync(request);
         }
+
+        if (request.Contains("ViewFeedbacks"))
+        {
+            return await _feedbackHandler.HandleRequestAsync(request);
+        }
+
+        if (request.Contains("ViewFeedbacksById"))
+        {
+            return await _feedbackHandler.HandleRequestAsync(request);
+        }
+        //ALL Feedbacks if conditions could be in 1 condition as it will go to same func
+
         if (request.Contains("GetRecommendedMeals"))
         {
             return await _recommendationHandler.GetRecommendedMeals(request);
         }
+
         if (request.Contains("RollOutItems"))
         {
             await _recommendationHandler.RollOutItems(request);
         }
+
         if (request.Contains("GetRolledOutItems"))
         {
             return await _recommendationHandler.GetRolledOutItems(request);
+        }
+
+        if (request.Contains("ItemsVoting"))
+        {
+            await _recommendationHandler.ItemsVoting(request);
+            return "Items Voting TEST TEST TEST";
+        }
+
+        if (request.Contains("SendMessage"))
+        {
+            await _notificationHandler.SendNotifications(request);
+            return "Notification sent";
+        }
+
+        if (request.Contains("ViewNotifications"))
+        {
+            await _notificationHandler.ViewNotifications(request);
+            return "TEST";
+        }
+        if (request.Contains("ViewNotificationsById"))
+        {
+            await _notificationHandler.ViewNotificationsById(request);
+            return "TEST";
+        }
+        if (request.Contains("DiscardListAction"))
+        {
+            return await _feedbackHandler.HandleRequestAsync(request);
         }
         else
         {

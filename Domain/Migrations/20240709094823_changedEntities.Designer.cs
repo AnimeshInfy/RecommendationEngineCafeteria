@@ -4,6 +4,7 @@ using Domain.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(CafeteriaDbContext))]
-    partial class CafeteriaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240709094823_changedEntities")]
+    partial class changedEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,10 +136,6 @@ namespace Domain.Migrations
 
                     b.Property<DateTime>("NotificationDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("TargetedUserIds")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("UsersId")
                         .HasColumnType("int");
@@ -301,7 +299,7 @@ namespace Domain.Migrations
             modelBuilder.Entity("Domain.Models.UserNotification", b =>
                 {
                     b.HasOne("Domain.Models.Notification", "Notification")
-                        .WithMany()
+                        .WithMany("UserNotifications")
                         .HasForeignKey("NotificationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -326,6 +324,11 @@ namespace Domain.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Models.Notification", b =>
+                {
+                    b.Navigation("UserNotifications");
                 });
 
             modelBuilder.Entity("Domain.Models.Users", b =>

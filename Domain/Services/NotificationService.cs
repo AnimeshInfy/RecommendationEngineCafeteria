@@ -3,23 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Models;
+using Domain.Repositories;
 using Domain.Services.IServices;
 
 namespace Domain.Services
 {
     public class NotificationService : INotificationService
     {
-        //private readonly SocketServer _socketServer;
+        private readonly INotificationRepository _notificationRepository; 
+        public NotificationService(INotificationRepository notificationRepository)
+        {
+            _notificationRepository = notificationRepository;
+        }
 
-        //public NotificationService(SocketServer socketServer)
-        //{
-        //    _socketServer = socketServer;
-        //}
+        public Task GetDetailedFeedbackOnDiscardedItems()
+        {
+            throw new NotImplementedException();
+        }
 
-        //public void Notify(string message)
-        //{
-        //    _socketServer.BroadcastMessage(message);
-        //}
+        public async Task SendNotification(string message)
+        {
+            await _notificationRepository.SendNotification(message);
+        }
+
+        public async Task<List<Notification>> ViewAllNotificationsAsync()
+        {
+            return await _notificationRepository.ViewAllNotificationsAsync();
+        }
+
+        public async Task<List<Notification>> ViewNotificationsByUserIdAsync()
+        {
+            int viewerId = Convert.ToInt32(Console.ReadLine());
+            return await _notificationRepository.ViewNotificationsByUserIdAsync(viewerId);
+        }
     }
 
 }

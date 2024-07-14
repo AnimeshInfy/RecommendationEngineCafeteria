@@ -19,6 +19,8 @@ namespace Domain.DataAccess
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<AllSentiments> Sentiments { get; set; }
         public DbSet<RolledOutItems> RolledOutItems { get; set; }   
+        public DbSet<VotedItems> VotedItems { get; set; }
+        public DbSet<UserNotification> UserNotifications { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -38,16 +40,6 @@ namespace Domain.DataAccess
                 .HasOne(f => f.MenuItems)
                 .WithMany()
                 .HasForeignKey(f => f.MenuItemId);
-
-            modelBuilder.Entity<Notification>()
-                .HasOne(n => n.User)
-                .WithMany(u => u.Notifications)
-                .HasForeignKey(n => n.UserId);
-
-            modelBuilder.Entity<Notification>()
-                .HasOne(n => n.MenuItems)
-                .WithMany()
-                .HasForeignKey(n => n.MenuItemId);
         }
     }
 }

@@ -4,6 +4,7 @@ using Domain.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(CafeteriaDbContext))]
-    partial class CafeteriaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240627070949_addedVotedItemsModel")]
+    partial class addedVotedItemsModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,6 +130,9 @@ namespace Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"), 1L, 1);
 
+                    b.Property<int>("MenuItemId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -135,16 +140,14 @@ namespace Domain.Migrations
                     b.Property<DateTime>("NotificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TargetedUserIds")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UsersId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("NotificationId");
 
-                    b.HasIndex("UsersId");
+                    b.HasIndex("MenuItemId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
                 });
@@ -185,41 +188,12 @@ namespace Domain.Migrations
                     b.Property<double?>("SentimentScore")
                         .HasColumnType("float");
 
-                    b.Property<int?>("VoteCount")
-                        .HasColumnType("int");
-
                     b.Property<bool?>("isItemUnderDiscardList")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
 
                     b.ToTable("RolledOutItems");
-                });
-
-            modelBuilder.Entity("Domain.Models.UserNotification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("NotificationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NotificationId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserNotifications");
                 });
 
             modelBuilder.Entity("Domain.Models.Users", b =>
@@ -293,28 +267,21 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.Notification", b =>
                 {
-                    b.HasOne("Domain.Models.Users", null)
-                        .WithMany("Notifications")
-                        .HasForeignKey("UsersId");
-                });
-
-            modelBuilder.Entity("Domain.Models.UserNotification", b =>
-                {
-                    b.HasOne("Domain.Models.Notification", "Notification")
+                    b.HasOne("Domain.Models.MenuItems", "MenuItems")
                         .WithMany()
-                        .HasForeignKey("NotificationId")
+                        .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.Users", "Users")
-                        .WithMany()
+                    b.HasOne("Domain.Models.Users", "User")
+                        .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Notification");
+                    b.Navigation("MenuItems");
 
-                    b.Navigation("Users");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Models.VotedItems", b =>

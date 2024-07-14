@@ -14,9 +14,12 @@ namespace Server.RequestHandler
     public class RecommendationHandler
     {
         private readonly IRecommendationEngineService _recommendationEngineService;
-        public RecommendationHandler(IRecommendationEngineService recommendationEngineService)
+        private readonly IMenuService _menuService;
+        public RecommendationHandler(IRecommendationEngineService recommendationEngineService, 
+            IMenuService menuService)
         {
             _recommendationEngineService = recommendationEngineService;
+            _menuService = menuService;
         }
         public async Task<string> GetRecommendedMeals(string request)
         {
@@ -43,10 +46,35 @@ namespace Server.RequestHandler
         {
             if (request.Contains("GetRolledOutItems"))
             {
-                var menuItems = await _recommendationEngineService.GetRolledOutItems();
+                DateOnly dateOnly = new DateOnly();
+                var menuItems = await _recommendationEngineService.GetRolledOutItems(dateOnly);
                 return JsonConvert.SerializeObject(menuItems);
             }
             return "Unknown request";
+        }
+
+        public async Task ItemsVoting(string request)
+        {
+            if (request.Contains("ItemsVoting"))
+            {
+                var a = request.Split("_");
+                if (a.Length > 1)
+                {
+                    var rollOutIds = a[1].Split(",");
+                    var mealVotes = new Dictionary<string, string>();
+
+                    foreach (var item in rollOutIds)
+                    {
+                        var vote = item.Split(':');
+                        if (vote.Length == 2)
+                        {
+                            mealVotes[vote[0]] = vote[1];
+                        }
+                    }
+
+                    await _menuService.ItemsVoting(mealVotes);
+                }
+            }
         }
     }
 }

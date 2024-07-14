@@ -13,7 +13,7 @@ namespace Domain.Services.IServices
         Task CalculateSentimentScore();
         Task CalculateAvgRating();
         Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItems(string noOfRecommendedItems);
-        Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems();
+        Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems(DateOnly date);
         Task RollOutItems(string[] rollOutIds);
     }
 }

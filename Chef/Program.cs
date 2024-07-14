@@ -46,8 +46,10 @@ namespace Chef
             while (true)
             {
                 Console.WriteLine("\nChef Menu:\n");
-                Console.WriteLine("Choose from below options: \n1. View Menu \n2. Get List of recommended meals \n" +
-                    "3. Roll Out Food items \n4. Logout \n5. Exit");
+                Console.WriteLine("Choose from below options: \n1. View Menu " +
+                    "\n2. Get List of recommended meals \n3. Roll Out Food items " +
+                    "\n4. Logout \n5. View Feedbacks \n6. View Feedback by food id" +
+                    "\n7. View Max voted items \n8. Send Notifications \n9. Exit");
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
@@ -70,6 +72,12 @@ namespace Chef
                         ViewFeedbacksById(client);
                         break;
                     case "7":
+                        //View max voted items
+                        break;
+                    case "8":
+                        SendNotifications(client);
+                        break;
+                    case "9":
                         Environment.Exit(0);
                         return;
                     default:
@@ -79,14 +87,22 @@ namespace Chef
             }
         }
 
-        private static void ViewAllFeedbacks(SocketClient client)
+        private static async void ViewAllFeedbacks(SocketClient client)
         {
-            throw new NotImplementedException();
+            string request = "ViewFeedbacks";
+            string response = await client.CommunicateWithStreamAsync(request);
+            var deserializedResponse = JsonConvert.DeserializeObject(response);
+            Console.WriteLine($"Feedbacks: {deserializedResponse}");
         }
 
-        private static void ViewFeedbacksById(SocketClient client)
+        private static async void ViewFeedbacksById(SocketClient client)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Enter the food id for which you want to see the feedback");
+            int foodId = Convert.ToInt32(Console.ReadLine());
+            string request = $"ViewFeedbacksById_{foodId}";
+            string response = await client.CommunicateWithStreamAsync(request);
+            var deserializedResponse = JsonConvert.DeserializeObject(response);
+            Console.WriteLine($"Feedbacks: {deserializedResponse}");
         }
 
         public static async Task ViewMenu(SocketClient client)
@@ -119,6 +135,44 @@ namespace Chef
         {
             Console.WriteLine("User Logged out, Please Login again to continue");
             Login(client);
+        }
+        public static async void SendNotifications(SocketClient client)
+        {
+            Console.WriteLine("\nPlease write the message you want to convey to Users\n");
+            string message = Console.ReadLine();
+            Console.WriteLine("Enter the target users for receving the notification: \n");
+            Console.WriteLine("If you want to send notifications to all users, press Y\n");
+            string sendToAllUsers = Console.ReadLine();
+            string request = "";
+            if (sendToAllUsers.ToLower() == "y")
+            {
+                request = $"SendMessage_{message}:{sendToAllUsers}";
+            }
+            else
+            {
+                await Console.Out.WriteLineAsync("\nEnter the targeted user Ids in Comma seperated value format: \n");
+                string targetedUserIds = Console.ReadLine();
+                request = $"SendMessage_{message}:{sendToAllUsers}-{targetedUserIds}";
+            }
+            string response = await client.CommunicateWithStreamAsync(request);
+        }
+        public static async void TakeActionOnDiscardedMenu(SocketClient client)
+        {
+            Console.WriteLine("\nDiscarded Menu List: \n");
+            Console.WriteLine("Press 1 for getting detailed feedback\n");
+            Console.WriteLine("Press 2 for deleting the items from menu\n");
+            string action = Console.ReadLine();
+            if (action == "1")
+            {
+                //ask questions
+            }
+            else
+            {
+                //delete items
+            }
+
+            string request = $"DiscardListAction_{action}";
+            string response = await client.CommunicateWithStreamAsync(request);
         }
     }
 }

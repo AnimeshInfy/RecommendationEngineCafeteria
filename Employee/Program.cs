@@ -28,8 +28,11 @@ namespace Employee
             while (true)
             {
                 Console.WriteLine("\nEmployee Menu:\n");
-                Console.WriteLine("Choose from below options: \n1. View Menu \n2. Get List of meals rolled out by Chef \n" +
-                    "3. Vote for next day meals \n4. Provide Feedback on Food Items \n5. Logout \n6. Exit");
+                Console.WriteLine("Choose from below options: \n1. View Menu " +
+                    "\n2. Get List of meals rolled out by Chef \n" +
+                    "3. Vote for next day meals \n4. Provide Feedback on Food Items " +
+                    "\n5. View Notifications" +" \n6. View Notifications by user ID" +
+                    "\n7. Logout \n8. Exit");
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
@@ -46,9 +49,15 @@ namespace Employee
                         ProvideFeedback(client);
                         break;
                     case "5":
-                        Logout(client);
+                        ViewNotifications(client);
                         break;
                     case "6":
+                        ViewNotificationsByUserId(client);
+                        break;
+                    case "7":
+                        Logout(client);
+                        break;
+                    case "8":
                         Environment.Exit(0);
                         return;
                     default:
@@ -81,6 +90,39 @@ namespace Employee
 
         private async static void VoteForMeals(SocketClient client)
         {
+            Console.WriteLine("\nVote for the items rolled out by Chef\n");
+            GetItemsRolledOutByChef(client);
+            VotedItems mealVote = new VotedItems();
+            mealVote.Date = DateTime.Now;
+            Console.WriteLine("\nPlease Provide your user Id");
+            mealVote.UserId = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Enter meal type for which you want to vote");
+            int mealType = Convert.ToInt32(Console.ReadLine());
+            if (mealType == 1)
+            {
+                mealVote.MealTypes = "Breakfast";
+            }
+            else if (mealType == 2)
+            {
+                mealVote.MealTypes = "Lunch";
+            }
+            else if (mealType == 3)
+            {
+                mealVote.MealTypes = "Dinner";
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice of meal types");
+            }
+            Console.WriteLine("Enter the food name which you want: ");
+            mealVote.FoodName = Console.ReadLine();
+
+            string jsonRequest = JsonConvert.SerializeObject(mealVote);
+            string request = $"ItemsVoting_{jsonRequest}";
+
+            var response = await client.CommunicateWithStreamAsync(request);
+            Console.WriteLine($"Server response: {response}");
+
         }
 
         private async static void GetItemsRolledOutByChef(SocketClient client)
@@ -121,5 +163,21 @@ namespace Employee
             Console.WriteLine("User Logged out, Please Login again to continue");
             Login(client);
         }
+
+        public static async Task ViewNotifications(SocketClient client)
+        {
+            Console.WriteLine("Enter User Id: \n");
+            int userId = Convert.ToInt32(Console.ReadLine());
+            string request = $"ViewNotifications_{userId}";
+            string response = await client.CommunicateWithStreamAsync(request);
+        }
+        public static async Task ViewNotificationsByUserId(SocketClient client)
+        {
+            Console.WriteLine("Enter User Id: \n");
+            int userId = Convert.ToInt32(Console.ReadLine());
+            string request = $"ViewNotificationsById_{userId}";
+            string response = await client.CommunicateWithStreamAsync(request);
+        }
+
     }
 }
