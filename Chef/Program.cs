@@ -50,7 +50,7 @@ namespace Chef
                     "\n2. Get List of recommended meals \n3. Roll Out Food items " +
                     "\n4. Logout \n5. View Feedbacks \n6. View Feedback by food id" +
                     "\n7. View Max voted items \n8. Send Notifications " +
-                    "\n9. Take actions on Discarded items \n10. Exit");
+                    "\n9. Take actions on Discarded items \n10. Add to discard menu \n11. Exit");
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
@@ -82,6 +82,9 @@ namespace Chef
                         TakeActionOnDiscardedMenu(client);
                         break;
                     case "10":
+                        AddToDiscardMenu(client);
+                        break;
+                    case "11":
                         Environment.Exit(0);
                         return;
                     default:
@@ -182,6 +185,12 @@ namespace Chef
             }
 
             string response = await client.CommunicateWithStreamAsync(request);
+        }
+
+        private static async void AddToDiscardMenu(SocketClient client)
+        {
+            string request = $"ReviewMenuItems";
+            string response = await client.CommunicateWithStreamAsync(request); 
         }
     }
 }

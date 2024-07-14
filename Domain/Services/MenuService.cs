@@ -147,5 +147,10 @@ namespace Domain.Services
         {
             await _menuItemRepository.DeleteDiscardedMenuItemAsync(id);
         }
+
+        public async Task ReviewDiscardList()
+        {
+            await _menuItemRepository.ReviewMenuItems();
+        }
     }
 }

@@ -147,6 +147,10 @@ public class SocketServer
         {
             return await _feedbackHandler.HandleRequestAsync(request);
         }
+        if (request.Contains("ReviewMenuItems"))
+        {
+            return await _menuHandler.HandleRequestAsync(request);
+        }
         else
         {
             return "Unknown request";

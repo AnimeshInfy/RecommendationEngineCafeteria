@@ -17,6 +17,8 @@ namespace Domain.Repositories
         Task RollOutItems(string[] rollOutIds);
         Task ItemsVoting(Dictionary<string, string> mealVotes);
         Task CastVoteAsync(string mealType, string foodName);
+        Task ReviewMenuItems();
+
 
     }
 }

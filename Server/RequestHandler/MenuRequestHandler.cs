@@ -50,6 +50,11 @@ namespace Server.RequestHandler
                 var menuItems = await _menuService.GetMenuItemsAsync();
                 return JsonConvert.SerializeObject(menuItems);
             }
+            else if (request.Contains("ReviewMenuItems"))
+            {
+                await _menuService.ReviewDiscardList();
+                return "Menu items have been reviewed for discard list";
+            }
 
             return "Unknown Request";
         }

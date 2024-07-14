@@ -136,6 +136,24 @@ namespace Domain.Repositories
                 await Console.Out.WriteLineAsync("\nRecord not found");
             }
         }
+
+        public async Task ReviewMenuItems()
+        {
+            var menuItems = await _context.MenuItems.ToListAsync();
+            foreach (var item in menuItems)
+            {
+                var ratingScore = item.AvgRating * 7;
+                var sentimentScore = item.SentimentScore * 3;
+                var discardScore = ratingScore + sentimentScore;
+                if (discardScore < 20)
+                {
+                    item.isItemUnderDiscardList = true;
+                }
+                _context.MenuItems.Update(item);
+                //_context.Entry(item).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }            
+        }
     }
 
 }
