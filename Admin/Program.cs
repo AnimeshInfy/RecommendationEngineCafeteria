@@ -105,7 +105,14 @@ namespace Admin
             item.IsAvailable = Convert.ToBoolean(Console.ReadLine());
             Console.WriteLine("Enter item meal type: ");
             item.MealType = Console.ReadLine();
-
+            Console.WriteLine("Enter item diet type: ");
+            item.dietType = Console.ReadLine();
+            Console.WriteLine("Enter item spice level: ");
+            item.SpiceLevel = Console.ReadLine();
+            Console.WriteLine("Enter region-wise meal preference: ");
+            item.regionalMealPreference = Console.ReadLine();
+            Console.WriteLine("Is the item sweet (true/false): ");
+            item.isItemSweet = Console.ReadLine();
             string jsonRequest = JsonConvert.SerializeObject(item);
             string request = $"AddItem_{jsonRequest}";
 

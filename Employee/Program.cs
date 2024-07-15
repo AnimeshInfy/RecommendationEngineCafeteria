@@ -100,39 +100,46 @@ namespace Employee
 
         private async static void VoteForMeals(SocketClient client)
         {
-            Console.WriteLine("\nVote for the items rolled out by Chef\n");
-            GetItemsRolledOutByChef(client);
-            VotedItems mealVote = new VotedItems();
-            mealVote.Date = DateTime.Now;
-            Console.WriteLine("\nPlease Provide your user Id");
-            mealVote.UserId = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Enter meal type for which you want to vote");
-            await Console.Out.WriteLineAsync("meal type options");
-            int mealType = Convert.ToInt32(Console.ReadLine());
-            if (mealType == 1)
+            try 
             {
-                mealVote.MealTypes = "Breakfast";
-            }
-            else if (mealType == 2)
-            {
-                mealVote.MealTypes = "Lunch";
-            }
-            else if (mealType == 3)
-            {
-                mealVote.MealTypes = "Dinner";
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice of meal types");
-            }
-            Console.WriteLine("Enter the food name which you want: ");
-            mealVote.FoodName = Console.ReadLine();
+                Console.WriteLine("\nVote for the items rolled out by Chef\n");
+                GetItemsRolledOutByChef(client);
+                VotedItems mealVote = new VotedItems();
+                mealVote.Date = DateTime.Now;
+                Console.WriteLine("\nPlease Provide your user Id");
+                mealVote.UserId = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Enter meal type for which you want to vote");
+                await Console.Out.WriteLineAsync("Select 1 for breakfast, 2 for lunch and 3 for dinner");
+                int mealType = Convert.ToInt32(Console.ReadLine());
+                if (mealType == 1)
+                {
+                    mealVote.MealTypes = "Breakfast";
+                }
+                else if (mealType == 2)
+                {
+                    mealVote.MealTypes = "Lunch";
+                }
+                else if (mealType == 3)
+                {
+                    mealVote.MealTypes = "Dinner";
+                }
+                else
+                {
+                    Console.WriteLine("Invalid choice of meal types");
+                }
+                Console.WriteLine("Enter the food name which you want: ");
+                mealVote.FoodName = Console.ReadLine();
 
-            string jsonRequest = JsonConvert.SerializeObject(mealVote);
-            string request = $"ItemsVoting_{jsonRequest}";
+                string jsonRequest = JsonConvert.SerializeObject(mealVote);
+                string request = $"ItemsVoting_{jsonRequest}";
 
-            var response = await client.CommunicateWithStreamAsync(request);
-            Console.WriteLine($"Server response: {response}");
+                var response = await client.CommunicateWithStreamAsync(request);
+                Console.WriteLine($"Server response: {response}");
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+            }
 
         }
 

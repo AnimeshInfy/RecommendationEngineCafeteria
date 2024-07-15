@@ -20,8 +20,8 @@ namespace Server.RequestHandler
         }
         public async Task SendNotifications(string request)
         {
-            var a = request.Split("_");
-            await _notificationService.SendNotification(a[1]);
+            var notificationInfo = request.Split("_");
+            await _notificationService.SendNotification(notificationInfo[1]);
         }
         public async Task<string> ViewNotificationsById(string request)
         {

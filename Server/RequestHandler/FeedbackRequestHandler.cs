@@ -30,8 +30,8 @@ namespace Server.RequestHandler
         {
             if (request.Contains("ProvideFeedback"))
             {
-                var a = request.Split('_');
-                var jsonDeserialized = JsonConvert.DeserializeObject<Feedback>(a[1]);
+                var feedback = request.Split('_');
+                var jsonDeserialized = JsonConvert.DeserializeObject<Feedback>(feedback[1]);
                 await _feedbackService.AddFeedbackAsync(jsonDeserialized);
                 return "Feeback Provided!";
             }
@@ -42,8 +42,8 @@ namespace Server.RequestHandler
             }
             if (request.Contains("ViewFeedbacksById"))
             {
-                var a = request.Split('_').Select(int.Parse).ToArray();
-                await _feedbackService.GetFeedbacksByFeedbackIdAsync(a[1]);
+                var feedbackInfo = request.Split('_').Select(int.Parse).ToArray();
+                await _feedbackService.GetFeedbacksByFeedbackIdAsync(feedbackInfo[1]);
             }
             if (request.Contains("GetDetailedfeedbackonfoodItem"))
             {

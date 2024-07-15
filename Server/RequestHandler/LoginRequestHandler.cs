@@ -24,8 +24,8 @@ namespace Server.RequestHandler {
         {
             if (request.Contains("Login"))
             {
-                var a = request.Split('_');
-                var jsonDeserialized = JsonConvert.DeserializeObject<UserDTO>(a[1]);
+                var loginInfo = request.Split('_');
+                var jsonDeserialized = JsonConvert.DeserializeObject<UserDTO>(loginInfo[1]);
                 var user = await _userService.AuthenticateUserAsync(jsonDeserialized.Id, jsonDeserialized.Name);
                 if (user != null)
                 {

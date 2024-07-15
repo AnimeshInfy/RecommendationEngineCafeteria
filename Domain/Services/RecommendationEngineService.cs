@@ -1,9 +1,7 @@
-﻿using Core.Utilities;
-using Data.Models;
+﻿using Data.Models;
 using Domain.ModelDTO;
 using Domain.Models;
 using Domain.Services.IServices;
-using Domain.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

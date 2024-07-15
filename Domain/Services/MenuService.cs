@@ -75,7 +75,7 @@ namespace Domain.Services
                 dietType = dto.dietType,
                 SpiceLevel = dto.SpiceLevel,
                 regionalMealPreference = dto.regionalMealPreference,
-                isSweetTooth = dto.isSweetTooth
+                isSweetTooth = dto.isItemSweet
             };
         }
 
@@ -96,7 +96,7 @@ namespace Domain.Services
                 dietType = model.dietType,
                 SpiceLevel = model.SpiceLevel,
                 regionalMealPreference = model.regionalMealPreference,
-                isSweetTooth = model.isSweetTooth
+                isItemSweet = model.isSweetTooth
 
             };
         }

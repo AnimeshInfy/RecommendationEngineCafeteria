@@ -52,6 +52,16 @@ namespace Domain.Repositories
             return menuItems;
         }
 
+        public async Task<IEnumerable<MenuItems>> GetRecommendedMenuBasedOnProfileAsync()
+        {
+            return await _context.MenuItems
+                .OrderByDescending(x => x.isSweetTooth)
+                .ThenBy(x => x.dietType)
+                .ThenBy(x => x.SpiceLevel)
+                .ThenByDescending(x => x.CommonScore)
+                .ToListAsync();
+        }
+
         public async Task RollOutItems(string[] rollOutIds)
         {
             var rollOutIdsInt = rollOutIds.Select(id => int.Parse(id)).ToArray();
@@ -150,7 +160,6 @@ namespace Domain.Repositories
                     item.isItemUnderDiscardList = true;
                 }
                 _context.MenuItems.Update(item);
-                //_context.Entry(item).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
         }

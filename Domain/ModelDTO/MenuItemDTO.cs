@@ -22,7 +22,7 @@ namespace Domain.ModelDTO
         public string? dietType { get; set; }
         public string? SpiceLevel { get; set; }
         public string? regionalMealPreference { get; set; }
-        public string? isSweetTooth { get; set; }
+        public string? isItemSweet { get; set; }
     }
 }
 

@@ -19,29 +19,29 @@ namespace Server.RequestHandler
         {
             if (request.Contains("AddItem"))
             {
-                var a = request.Split('_');
-                var jsonDeserialized = JsonConvert.DeserializeObject<MenuItemDTO>(a[1]);
+                var menuItemsInfo = request.Split('_');
+                var jsonDeserialized = JsonConvert.DeserializeObject<MenuItemDTO>(menuItemsInfo[1]);
                 await _menuService.AddMenuItemAsync(jsonDeserialized);
                 return "Item added successfully";
             }
             else if (request.Contains("UpdateItem"))
             {
-                var a = request.Split('_');
-                var jsonDeserialized = JsonConvert.DeserializeObject<MenuItemDTO>(a[1]);
+                var menuItemsInfo = request.Split('_');
+                var jsonDeserialized = JsonConvert.DeserializeObject<MenuItemDTO>(menuItemsInfo[1]);
                 await _menuService.UpdateMenuItemAsync(jsonDeserialized);
                 return "Item updated successfully";
             }
             else if (request == "DeleteItem")
             {
-                var a = request.Split('_');
-                int itemId = int.Parse(a[1]);
+                var menuItemsInfo = request.Split('_');
+                int itemId = int.Parse(menuItemsInfo[1]);
                 await _menuService.DeleteMenuItemAsync(itemId);
                 return "Item deleted successfully";
             }
             else if (request.Contains("DeleteItemsFromDiscardList"))
             {
-                var a = request.Split('_');
-                int itemId = int.Parse(a[1]);
+                var menuItemsInfo = request.Split('_');
+                int itemId = int.Parse(menuItemsInfo[1]);
                 await _menuService.DeleteDiscardedMenuItemAsync(itemId);
                 return "Item deleted successfully";
             }

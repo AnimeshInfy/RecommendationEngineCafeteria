@@ -26,8 +26,8 @@ namespace Server.RequestHandler
         {
             if (request.Contains("GetRecommendedMeals"))
             {
-                var a = request.Split('_');
-                var noOfRecommendedItems = a[1];
+                var recommendedMealsInfo = request.Split('_');
+                var noOfRecommendedItems = recommendedMealsInfo[1];
                 var menuItems = await _recommendationEngineService.GetRecommendedMenuItems(noOfRecommendedItems);
                 return JsonConvert.SerializeObject(menuItems);
             }
@@ -37,8 +37,8 @@ namespace Server.RequestHandler
         {
             if (request.Contains("RollOutItems"))
             {
-                var a = request.Split("_");
-                var rollOutIds = a[1].Split(",");
+                var rollOutItemsInfo = request.Split("_");
+                var rollOutIds = rollOutItemsInfo[1].Split(",");
                 await _recommendationEngineService.RollOutItems(rollOutIds);
             }
         }
@@ -58,10 +58,10 @@ namespace Server.RequestHandler
         {
             if (request.Contains("ItemsVoting"))
             {
-                var a = request.Split("_");
-                if (a.Length > 1)
+                var itemVotingInfo = request.Split("_");
+                if (itemVotingInfo.Length > 1)
                 {
-                    var rollOutIds = a[1].Split(",");
+                    var rollOutIds = itemVotingInfo[1].Split(",");
                     var mealVotes = new Dictionary<string, string>();
 
                     foreach (var item in rollOutIds)
@@ -80,8 +80,8 @@ namespace Server.RequestHandler
 
         public async Task<string> CreateProfile(string request)
         {
-            var a = request.Split('_');
-            var jsonDeserialized = JsonConvert.DeserializeObject<Profile>(a[1]);
+            var profileInfo = request.Split('_');
+            var jsonDeserialized = JsonConvert.DeserializeObject<Profile>(profileInfo[1]);
             await _recommendationEngineService.CreateProfile(jsonDeserialized);
             return "Profile created successfully";
         }
