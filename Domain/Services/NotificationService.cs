@@ -6,20 +6,35 @@ using System.Threading.Tasks;
 using Domain.Models;
 using Domain.Repositories;
 using Domain.Services.IServices;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Domain.Services
 {
     public class NotificationService : INotificationService
     {
         private readonly INotificationRepository _notificationRepository; 
-        public NotificationService(INotificationRepository notificationRepository)
+        private readonly IMenuItemRepository _menuItemRepository;
+        public NotificationService(INotificationRepository notificationRepository, 
+            IMenuItemRepository menuItemRepository)
         {
             _notificationRepository = notificationRepository;
+            _menuItemRepository = menuItemRepository;
         }
 
-        public Task GetDetailedFeedbackOnDiscardedItems(int foodId)
+        public async Task GetDetailedFeedbackOnDiscardedItems(int foodId)
         {
-            throw new NotImplementedException();
+            var foodName = _menuItemRepository.GetFoodItemNameById(foodId).Result[0];
+            bool isFoodItemDiscarded = _menuItemRepository.isFoodItemUnderDiscardMenu(foodId);
+            if (isFoodItemDiscarded)
+            {
+                string message = $"\n1.What didn’t you like about {foodName}? " +
+                $"\nQ2.How would you like {foodName} to taste? " +
+                "\nQ3.Share your mom’s recipe\n";
+                string sendToAllUsers = "Y";
+                string sendNotificationrequest = $"{message}:{sendToAllUsers}";
+
+                await _notificationRepository.SendNotification(sendNotificationrequest);
+            }
         }
 
         public async Task SendNotification(string message)

@@ -18,6 +18,8 @@ namespace Domain.Repositories
         Task ItemsVoting(Dictionary<string, string> mealVotes);
         Task CastVoteAsync(string mealType, string foodName);
         Task ReviewMenuItems();
+        Task<List<string>> GetFoodItemNameById(int foodId);
+        bool isFoodItemUnderDiscardMenu(int foodId);
 
 
     }

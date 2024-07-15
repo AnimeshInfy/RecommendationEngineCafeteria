@@ -88,7 +88,7 @@ namespace Domain.Repositories
         public async Task<IEnumerable<RolledOutItems>> GetRolledOutItems(DateOnly date)
         {
             date = DateOnly.FromDateTime(DateTime.Now);
-            return await _context.RolledOutItems.Where(x => x.RolledOutDate.Date == 
+            return await _context.RolledOutItems.Where(x => x.RolledOutDate.Date ==
             date.ToDateTime(TimeOnly.MinValue).Date).ToListAsync();
         }
 
@@ -108,7 +108,7 @@ namespace Domain.Repositories
             var date = DateOnly.FromDateTime(DateTime.Now);
             Console.WriteLine("\nEnter your vote: ");
             Console.WriteLine("Enter your user id: ");
-            int userId = Convert.ToInt32(Console.ReadLine());   
+            int userId = Convert.ToInt32(Console.ReadLine());
 
             var vote = new VotedItems
             {
@@ -152,7 +152,22 @@ namespace Domain.Repositories
                 _context.MenuItems.Update(item);
                 //_context.Entry(item).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
-            }            
+            }
+        }
+        public async Task<List<string>> GetFoodItemNameById(int foodId)
+        {
+            var menuItemFoodName = await _context.MenuItems.Where(x => x.Id == foodId).
+                Select(x => x.Name).ToListAsync();
+            return menuItemFoodName;
+        }
+        public bool isFoodItemUnderDiscardMenu(int foodId)
+        {
+            var menuItems = _context.MenuItems.Where(x => x.Id == foodId && x.isItemUnderDiscardList == true).ToList();  
+            if (menuItems.Count > 0)
+            {
+                return true;
+            }
+            return false;
         }
     }
 
