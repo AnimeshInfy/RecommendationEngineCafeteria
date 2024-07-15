@@ -34,5 +34,13 @@ namespace Domain.Repositories
             role = "INVALID CREDENTIALS";
             return role;
         }
+
+        public string GetAdminAndChefUserId()
+        {
+            var adminAndChefUsersId = _context.Users.Where(x => x.Role.ToLower() == "admin"
+            || x.Role.ToLower() == "chef").Select(x => x.Id).ToList();
+            string targetUserIds = string.Join(",", adminAndChefUsersId);
+            return targetUserIds;
+        }
     }
 }

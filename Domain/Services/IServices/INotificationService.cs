@@ -13,5 +13,6 @@ namespace Domain.Services.IServices
         Task<List<Notification>> ViewAllNotificationsAsync();
         Task SendNotification(string message);
         Task GetDetailedFeedbackOnDiscardedItems(int foodId);
+        Task GiveDetailedFeedbackOnDiscardedItems(string message);
     }
 }

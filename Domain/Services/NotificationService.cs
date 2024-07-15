@@ -14,11 +14,13 @@ namespace Domain.Services
     {
         private readonly INotificationRepository _notificationRepository; 
         private readonly IMenuItemRepository _menuItemRepository;
+        private readonly IUserRepository _userRepository;
         public NotificationService(INotificationRepository notificationRepository, 
-            IMenuItemRepository menuItemRepository)
+            IMenuItemRepository menuItemRepository, IUserRepository userRepository)
         {
             _notificationRepository = notificationRepository;
             _menuItemRepository = menuItemRepository;
+            _userRepository = userRepository;
         }
 
         public async Task GetDetailedFeedbackOnDiscardedItems(int foodId)
@@ -35,6 +37,14 @@ namespace Domain.Services
 
                 await _notificationRepository.SendNotification(sendNotificationrequest);
             }
+        }
+
+        public async Task GiveDetailedFeedbackOnDiscardedItems(string message)
+        {
+            var receiverIds = _userRepository.GetAdminAndChefUserId();
+            string sendToAllUsers = "N";
+            string sendNotificationrequest = $"{message}:{sendToAllUsers}-{receiverIds}";
+            await _notificationRepository.SendNotification(sendNotificationrequest);
         }
 
         public async Task SendNotification(string message)

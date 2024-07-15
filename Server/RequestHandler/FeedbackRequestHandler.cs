@@ -51,6 +51,11 @@ namespace Server.RequestHandler
                 int foodId = Convert.ToInt32(detailedFeedbackInfo[1]);
                 await _notificationService.GetDetailedFeedbackOnDiscardedItems(foodId);
             }
+            if (request.Contains("GiveDetailedFeedbackOnDiscardedItems"))
+            {
+                var detailedFeedbackInfo = request.Split('_');
+                await _notificationService.GiveDetailedFeedbackOnDiscardedItems(detailedFeedbackInfo[1]);
+            }
             return "Invalid Request";
         }
     }

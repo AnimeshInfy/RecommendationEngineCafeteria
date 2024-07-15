@@ -32,7 +32,7 @@ namespace Employee
                     "\n2. Get List of meals rolled out by Chef \n" +
                     "3. Vote for next day meals \n4. Provide Feedback on Food Items " +
                     "\n5. View Notifications" +" \n6. View Notifications by user ID" +
-                    "\n7. Logout \n8. Exit");
+                    "\n7. GiveDetailedFeedbackOnDiscardedItems \n8. Logout \n9. Exit");
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
@@ -55,9 +55,12 @@ namespace Employee
                         ViewNotificationsByUserId(client);
                         break;
                     case "7":
-                        Logout(client);
+                        GiveDetailedFeedbackOnDiscardedItems(client);
                         break;
                     case "8":
+                        Logout(client);
+                        break;
+                    case "9":
                         Environment.Exit(0);
                         return;
                     default:
@@ -174,6 +177,13 @@ namespace Employee
             Console.WriteLine("Enter your User Id: \n");
             int userId = Convert.ToInt32(Console.ReadLine());
             string request = $"ViewNotificationsById_{userId}";
+            string response = await client.CommunicateWithStreamAsync(request);
+        }
+        public static async Task GiveDetailedFeedbackOnDiscardedItems(SocketClient client)
+        {
+            Console.WriteLine("Provide answer to the questions asked on the discarded items: \n");
+            int answers = Convert.ToInt32(Console.ReadLine());
+            string request = $"GiveDetailedFeedbackOnDiscardedItems_{answers}";
             string response = await client.CommunicateWithStreamAsync(request);
         }
     }

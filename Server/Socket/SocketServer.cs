@@ -151,6 +151,10 @@ public class SocketServer
         {
             return await _menuHandler.HandleRequestAsync(request);
         }
+        if (request.Contains("GiveDetailedFeedbackOnDiscardedItems"))
+        {
+            return await _feedbackHandler.HandleRequestAsync(request);
+        }
         else
         {
             return "Unknown request";

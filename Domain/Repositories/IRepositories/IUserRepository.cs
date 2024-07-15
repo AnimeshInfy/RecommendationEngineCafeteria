@@ -6,5 +6,7 @@ namespace Domain.Repositories
     public interface IUserRepository
     {
         Task<Users> AuthenticateUserAsync(int employeeId, string name);
+        string GetAdminAndChefUserId();
+
     }
 }
