@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Data.Models;
+using Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Domain.Services.IServices
     public interface IUserService
     {
         Task<Users> AuthenticateUserAsync(int employeeId, string name);
+        Task CreateProfile(Profile profile);
     }
 }

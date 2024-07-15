@@ -1,4 +1,5 @@
-﻿using Domain.DataAccess;
+﻿using Data.Models;
+using Domain.DataAccess;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -41,6 +42,12 @@ namespace Domain.Repositories
             || x.Role.ToLower() == "chef").Select(x => x.Id).ToList();
             string targetUserIds = string.Join(",", adminAndChefUsersId);
             return targetUserIds;
+        }
+
+        public async Task CreateProfile(Profile profile)
+        {
+            await _context.Profile.AddAsync(profile);
+            await _context.SaveChangesAsync();
         }
     }
 }

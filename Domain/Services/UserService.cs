@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Data.Models;
+using Domain.Models;
 using Domain.Repositories;
 using Domain.Services.IServices;
 using System;
@@ -20,6 +21,11 @@ namespace Domain.Services
         public async Task<Users> AuthenticateUserAsync(int employeeId, string name)
         {
             return await _userRepository.AuthenticateUserAsync(employeeId, name);
+        }
+
+        public async Task CreateProfile(Profile profile)
+        {
+            await _userRepository.CreateProfile(profile);
         }
 
         public async Task<string> GetRoleForUserAsync(int employeeId, string name)

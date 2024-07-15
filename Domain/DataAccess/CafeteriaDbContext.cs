@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Data.Models;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace Domain.DataAccess
         public DbSet<AllSentiments> Sentiments { get; set; }
         public DbSet<RolledOutItems> RolledOutItems { get; set; }   
         public DbSet<VotedItems> VotedItems { get; set; }
-        public DbSet<UserNotification> UserNotifications { get; set; }
+        public DbSet<Profile> Profile { get; set; } 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

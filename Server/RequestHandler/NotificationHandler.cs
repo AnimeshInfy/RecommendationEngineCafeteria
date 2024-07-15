@@ -23,12 +23,12 @@ namespace Server.RequestHandler
             var a = request.Split("_");
             await _notificationService.SendNotification(a[1]);
         }
-        public async Task<List<Notification>> ViewNotificationsById(string request)
+        public async Task<string> ViewNotificationsById(string request)
         {
             var notificationInfo = request.Split("_");
             var notificationsById = await _notificationService.ViewNotificationsByUserIdAsync(Convert.ToInt32(notificationInfo[1]));
-            var js = JsonConvert.SerializeObject(notificationsById);    
-            return notificationsById;
+            var notificationJs = JsonConvert.SerializeObject(notificationsById);    
+            return notificationJs;
         }
         public async Task<string> ViewNotifications(string request)
         {

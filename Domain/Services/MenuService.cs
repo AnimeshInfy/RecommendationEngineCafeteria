@@ -71,7 +71,11 @@ namespace Domain.Services
                 AvgRating = dto.AvgRating,
                 SentimentScore = dto.SentimentScore,
                 CommonScore = dto.CommonScore,
-                isItemUnderDiscardList = dto.isItemUnderDiscardList
+                isItemUnderDiscardList = dto.isItemUnderDiscardList,
+                dietType = dto.dietType,
+                SpiceLevel = dto.SpiceLevel,
+                regionalMealPreference = dto.regionalMealPreference,
+                isSweetTooth = dto.isSweetTooth
             };
         }
 
@@ -88,7 +92,12 @@ namespace Domain.Services
                 AvgRating = model.AvgRating,
                 SentimentScore = model.SentimentScore,
                 CommonScore = model.CommonScore,
-                isItemUnderDiscardList = model.isItemUnderDiscardList
+                isItemUnderDiscardList = model.isItemUnderDiscardList,
+                dietType = model.dietType,
+                SpiceLevel = model.SpiceLevel,
+                regionalMealPreference = model.regionalMealPreference,
+                isSweetTooth = model.isSweetTooth
+
             };
         }
 

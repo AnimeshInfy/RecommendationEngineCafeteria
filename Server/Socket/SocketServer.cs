@@ -89,75 +89,159 @@ public class SocketServer
     {
         if (request.Contains("Login"))
         {
-            return await _loginRequestHandler.HandleRequestAsync(request);
+            return await HandleLoginRequestAsync(request);
         }
 
-        if (request.StartsWith("ViewMenu") || request.StartsWith("AddItem") 
+        if (request.StartsWith("ViewMenu") || request.StartsWith("AddItem")
             || request.StartsWith("UpdateItem") || request.StartsWith("DeleteItem"))
         {
-            return await _menuHandler.HandleRequestAsync(request);
+            return await HandleMenuRequestAsync(request);
         }
 
         if (request.Contains("ProvideFeedback") || request.Contains("ViewFeedbacks")
             || request.Contains("ViewFeedbacksById"))
         {
-            return await _feedbackHandler.HandleRequestAsync(request);
+            return await HandleFeedbackRequestAsync(request);
         }
 
         if (request.Contains("GetRecommendedMeals"))
         {
-            return await _recommendationHandler.GetRecommendedMeals(request);
+            return await HandleGetRecommendedMealsAsync(request);
         }
 
         if (request.Contains("RollOutItems"))
         {
-            await _recommendationHandler.RollOutItems(request);
+            await HandleRollOutItemsAsync(request);
+            return "Items rolled out";
         }
 
         if (request.Contains("GetRolledOutItems"))
         {
-            return await _recommendationHandler.GetRolledOutItems(request);
+            return await HandleGetRolledOutItemsAsync(request);
         }
 
         if (request.Contains("ItemsVoting"))
         {
-            await _recommendationHandler.ItemsVoting(request);
-            return "Items Voting TEST TEST TEST";
+            await HandleItemsVotingAsync(request);
         }
 
         if (request.Contains("SendMessage"))
         {
-            await _notificationHandler.SendNotifications(request);
-            return "Notification sent";
+            return await HandleSendMessageAsync(request);
         }
 
         if (request == "ViewNotifications")
         {
-            return await _notificationHandler.ViewNotifications(request);
+            return await HandleViewNotificationsAsync(request);
         }
+
         if (request.Contains("ViewNotificationsById"))
         {
-            await _notificationHandler.ViewNotificationsById(request);
+            return await HandleViewNotificationsByIdAsync(request);
         }
+
         if (request.Contains("DeleteItemsFromDiscardList"))
         {
-            return await _menuHandler.HandleRequestAsync(request);
+            return await HandleDeleteItemsFromDiscardListAsync(request);
         }
+
         if (request.Contains("GetDetailedfeedbackonfoodItem"))
         {
-            return await _feedbackHandler.HandleRequestAsync(request);
+            return await HandleGetDetailedFeedbackOnFoodItemAsync(request);
         }
+
         if (request.Contains("ReviewMenuItems"))
         {
-            return await _menuHandler.HandleRequestAsync(request);
+            return await HandleReviewMenuItemsAsync(request);
         }
-        if (request.Contains("GiveDetailedFeedbackOnDiscardedItems"))
+
+        if (request.Contains("GiveDetailedFeedbackOnDiscardedItems_"))
         {
-            return await _feedbackHandler.HandleRequestAsync(request);
+            return await HandleGiveDetailedFeedbackOnDiscardedItemsAsync(request);
         }
-        else
+
+        if (request.Contains("CreateProfile"))
         {
-            return "Unknown request";
+            return await HandleCreateProfileAsync(request);
         }
+
+        return "Unknown request";
     }
+
+    private async Task<string> HandleLoginRequestAsync(string request)
+    {
+        return await _loginRequestHandler.HandleRequestAsync(request);
+    }
+
+    private async Task<string> HandleMenuRequestAsync(string request)
+    {
+        return await _menuHandler.HandleRequestAsync(request);
+    }
+
+    private async Task<string> HandleFeedbackRequestAsync(string request)
+    {
+        return await _feedbackHandler.HandleRequestAsync(request);
+    }
+
+    private async Task<string> HandleGetRecommendedMealsAsync(string request)
+    {
+        return await _recommendationHandler.GetRecommendedMeals(request);
+    }
+
+    private async Task HandleRollOutItemsAsync(string request)
+    {
+        await _recommendationHandler.RollOutItems(request);
+    }
+
+    private async Task<string> HandleGetRolledOutItemsAsync(string request)
+    {
+        return await _recommendationHandler.GetRolledOutItems(request);
+    }
+
+    private async Task HandleItemsVotingAsync(string request)
+    {
+        await _recommendationHandler.ItemsVoting(request);
+    }
+
+    private async Task<string> HandleSendMessageAsync(string request)
+    {
+        await _notificationHandler.SendNotifications(request);
+        return "Notification sent";
+    }
+
+    private async Task<string> HandleViewNotificationsAsync(string request)
+    {
+        return await _notificationHandler.ViewNotifications(request);
+    }
+
+    private async Task<string> HandleViewNotificationsByIdAsync(string request)
+    {
+        return await _notificationHandler.ViewNotificationsById(request);
+    }
+
+    private async Task<string> HandleDeleteItemsFromDiscardListAsync(string request)
+    {
+        return await _menuHandler.HandleRequestAsync(request);
+    }
+
+    private async Task<string> HandleGetDetailedFeedbackOnFoodItemAsync(string request)
+    {
+        return await _feedbackHandler.HandleRequestAsync(request);
+    }
+
+    private async Task<string> HandleReviewMenuItemsAsync(string request)
+    {
+        return await _menuHandler.HandleRequestAsync(request);
+    }
+
+    private async Task<string> HandleGiveDetailedFeedbackOnDiscardedItemsAsync(string request)
+    {
+        return await _feedbackHandler.HandleRequestAsync(request);
+    }
+
+    private async Task<string> HandleCreateProfileAsync(string request)
+    {
+        return await _recommendationHandler.CreateProfile(request);
+    }
+
 }

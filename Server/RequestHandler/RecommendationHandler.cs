@@ -1,4 +1,5 @@
-﻿using Domain.ModelDTO;
+﻿using Data.Models;
+using Domain.ModelDTO;
 using Domain.Models;
 using Domain.Services;
 using Domain.Services.IServices;
@@ -75,6 +76,14 @@ namespace Server.RequestHandler
                     await _menuService.ItemsVoting(mealVotes);
                 }
             }
+        }
+
+        public async Task<string> CreateProfile(string request)
+        {
+            var a = request.Split('_');
+            var jsonDeserialized = JsonConvert.DeserializeObject<Profile>(a[1]);
+            await _recommendationEngineService.CreateProfile(jsonDeserialized);
+            return "Profile created successfully";
         }
     }
 }

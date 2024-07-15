@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultiClientServerConnection
+namespace Data.Repositories
 {
-    class ViewMenuRequest
+    public class RollOutItemsRepository
     {
-        public string endpoint { get; set; }
     }
 }

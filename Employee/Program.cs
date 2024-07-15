@@ -1,4 +1,5 @@
-﻿using Domain.ModelDTO;
+﻿using Data.Models;
+using Domain.ModelDTO;
 using Domain.Models;
 using Newtonsoft.Json;
 using Server;
@@ -20,6 +21,9 @@ namespace Employee
             {
                 ShowMenu(client);
             }
+            else { 
+                await Login(client); 
+            }
             Console.ReadLine();
         }
 
@@ -37,7 +41,7 @@ namespace Employee
                 switch (choice)
                 {
                     case "1":
-                        await ViewMenu(client);
+                        ViewMenu(client);
                         break;
                     case "2":
                         GetItemsRolledOutByChef(client);
@@ -55,12 +59,15 @@ namespace Employee
                         ViewNotificationsByUserId(client);
                         break;
                     case "7":
-                        GiveDetailedFeedbackOnDiscardedItems(client);
+                        GiveDetailedFeedbackForDiscardedItems(client);
                         break;
                     case "8":
-                        Logout(client);
+                        CreateProfile(client);
                         break;
                     case "9":
+                        Logout(client);
+                        break;
+                    case "10":
                         Environment.Exit(0);
                         return;
                     default:
@@ -100,6 +107,7 @@ namespace Employee
             Console.WriteLine("\nPlease Provide your user Id");
             mealVote.UserId = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("Enter meal type for which you want to vote");
+            await Console.Out.WriteLineAsync("meal type options");
             int mealType = Convert.ToInt32(Console.ReadLine());
             if (mealType == 1)
             {
@@ -171,6 +179,7 @@ namespace Employee
         {
             string request = $"ViewNotifications";
             string response = await client.CommunicateWithStreamAsync(request);
+            Console.WriteLine(response);
         }
         public static async Task ViewNotificationsByUserId(SocketClient client)
         {
@@ -178,13 +187,35 @@ namespace Employee
             int userId = Convert.ToInt32(Console.ReadLine());
             string request = $"ViewNotificationsById_{userId}";
             string response = await client.CommunicateWithStreamAsync(request);
+            Console.WriteLine(response);
         }
-        public static async Task GiveDetailedFeedbackOnDiscardedItems(SocketClient client)
+        public static async Task GiveDetailedFeedbackForDiscardedItems(SocketClient client)
         {
             Console.WriteLine("Provide answer to the questions asked on the discarded items: \n");
-            int answers = Convert.ToInt32(Console.ReadLine());
+            string answers = Console.ReadLine();
             string request = $"GiveDetailedFeedbackOnDiscardedItems_{answers}";
             string response = await client.CommunicateWithStreamAsync(request);
+            Console.WriteLine(response);
+        }
+        private static async  void CreateProfile(SocketClient client)
+        {
+            Profile profile = new Profile();    
+            Console.WriteLine("Create your profile for food recommendations: \n");
+            Console.WriteLine("Enter user id:\n");
+            profile.UserId = Convert.ToInt32(Console.ReadLine());   
+            Console.WriteLine("Please select Veg/Non Veg\n");
+            profile.dietType = Console.ReadLine();
+            Console.WriteLine("Select Spice level:\n");
+            profile.SpiceLevel = Console.ReadLine();
+            Console.WriteLine("What do you prefer most (regionwise):\n");
+            profile.regionalMealPreference = Console.ReadLine();
+            Console.WriteLine("Are you sweeth tooth:t\n");
+            profile.isSweetTooth = Console.ReadLine();
+            
+            string jsonRequest = JsonConvert.SerializeObject(profile);
+            string request = $"CreateProfile_{jsonRequest}";
+
+            var response = await client.CommunicateWithStreamAsync(request);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.ModelDTO;
+﻿using Data.Models;
+using Domain.ModelDTO;
 using Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,6 @@ namespace Domain.Services.IServices
         Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItems(string noOfRecommendedItems);
         Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems(DateOnly date);
         Task RollOutItems(string[] rollOutIds);
+        Task CreateProfile(Profile profile);
     }
 }

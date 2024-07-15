@@ -1,4 +1,5 @@
 ﻿using Core.Utilities;
+using Data.Models;
 using Domain.ModelDTO;
 using Domain.Models;
 using Domain.Services.IServices;
@@ -16,12 +17,15 @@ namespace Domain.Services
         private readonly IRatingServce _ratingService;
         private readonly ISentimentsAnalysisService _sentimentService;
         private readonly IMenuService _menuService; 
+        private readonly IUserService _userService;
         public RecommendationEngineService(IRatingServce ratingServce, 
-            ISentimentsAnalysisService sentimentService, IMenuService menuService)
+            ISentimentsAnalysisService sentimentService, IMenuService menuService,
+            IUserService userService)
         {
             _ratingService = ratingServce;
             _sentimentService = sentimentService;
             _menuService = menuService;
+            _userService = userService;
         }
 
         public async Task CalculateAvgRating()
@@ -33,6 +37,12 @@ namespace Domain.Services
         {
             await _sentimentService.CalculateSentimentsScore();
         }
+
+        public async Task CreateProfile(Profile profile)
+        {
+             await _userService.CreateProfile(profile);
+        }
+
         public async Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItems(string noOfRecommendedItems)
         {
             await CalculateAvgRating();
