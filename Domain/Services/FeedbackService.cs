@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Data.ModelDTO;
+using Domain.Models;
 using Domain.Repositories;
 using Domain.Repositories.IRepositories;
 using Domain.Services.IServices;
@@ -26,14 +27,28 @@ namespace Domain.Services
             await _feedbackRepository.AddFeedbackAsync(feedback);
         }
 
-        public async Task<List<Feedback>> GetFeedbacksByFeedbackIdAsync(int feedbackId)
+        public async Task<List<FeedbackDTO>> GetFeedbacksByFeedbackIdAsync(int feedbackId)
         {
-            return await _feedbackRepository.GetFeedbacksByFeedbackIdAsync(feedbackId);
+            var feedback = await _feedbackRepository.GetFeedbacksByFeedbackIdAsync(feedbackId);
+            return feedback.Select(model => MapFeedbackModelToDto(model)).ToList();
         }
 
-        public async Task<List<Feedback>> ViewAllFeedbacksAsync()
+        public async Task<List<FeedbackDTO>> ViewAllFeedbacksAsync()
         {
-            return await _feedbackRepository.ViewAllFeedbacks();
+            var feedback = await _feedbackRepository.ViewAllFeedbacks();
+            return feedback.Select(model => MapFeedbackModelToDto(model)).ToList();
+        }
+        private FeedbackDTO MapFeedbackModelToDto(Feedback model)
+        {
+            return new FeedbackDTO
+            {
+                MenuItemId = model.MenuItemId,
+                UserId = model.UserId,
+                Comment = model.Comment,
+                Rating = model.Rating,
+                Date = model.Date,
+                SentimentScore = model.SentimentScore,
+            };
         }
     }
 

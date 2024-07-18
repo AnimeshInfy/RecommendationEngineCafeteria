@@ -52,17 +52,7 @@ namespace Domain.Repositories
             return menuItems;
         }
 
-        public async Task<IEnumerable<MenuItems>> GetRecommendedMenuBasedOnProfileAsync()
-        {
-            return await _context.MenuItems
-                .OrderByDescending(x => x.isSweetTooth)
-                .ThenBy(x => x.dietType)
-                .ThenBy(x => x.SpiceLevel)
-                .ThenByDescending(x => x.CommonScore)
-                .ToListAsync();
-        }
-
-        public async Task RollOutItems(string[] rollOutIds)
+        public async Task<string> RollOutItems(string[] rollOutIds)
         {
             var rollOutIdsInt = rollOutIds.Select(id => int.Parse(id)).ToArray();
 
@@ -85,7 +75,11 @@ namespace Domain.Repositories
                     AvgRating = menuItem.AvgRating,
                     SentimentScore = menuItem.SentimentScore,
                     CommonScore = menuItem.CommonScore,
-                    isItemUnderDiscardList = menuItem.isItemUnderDiscardList
+                    isItemUnderDiscardList = menuItem.isItemUnderDiscardList,
+                    dietType = menuItem.dietType,
+                    SpiceLevel = menuItem.SpiceLevel,
+                    regionalMealPreference = menuItem.regionalMealPreference,
+                    isSweetTooth = menuItem.isSweetTooth,
                 };
 
                 await _context.RolledOutItems.AddAsync(rolledOutItem);
@@ -93,42 +87,79 @@ namespace Domain.Repositories
             }
 
             await _context.SaveChangesAsync();
+            return "Items rolled out successfully";
         }
 
-        public async Task<IEnumerable<RolledOutItems>> GetRolledOutItems(DateOnly date)
+        public async Task<IEnumerable<RolledOutItems>> GetRolledOutItems(string userInfo, DateOnly date)
         {
-            date = DateOnly.FromDateTime(DateTime.Now);
-            return await _context.RolledOutItems.Where(x => x.RolledOutDate.Date ==
-            date.ToDateTime(TimeOnly.MinValue).Date).ToListAsync();
-        }
-
-        public async Task ItemsVoting(Dictionary<string, string> mealVotes)
-        {
-            foreach (var vote in mealVotes)
+            try
             {
-                string mealType = vote.Key;
-                string mealName = vote.Value;
+                date = DateOnly.FromDateTime(DateTime.Now);
+                var profile = await _context.Profile.Where(x => x.UserId == Convert.ToInt32(userInfo)).FirstOrDefaultAsync();
+                var rolledOutItemsByChef = await _context.RolledOutItems.ToListAsync();
+                var menuRecommended = rolledOutItemsByChef
+                    .Where(x => DateOnly.FromDateTime(x.RolledOutDate) == date)
+                    .ToList();
+                List<RolledOutItems> menuSortedOnProfile = new List<RolledOutItems>();
 
-                await CastVoteAsync(mealType, mealName);
+                if (profile != null && menuRecommended != null)
+                {
+                    var sortedMenu = profile.isSweetTooth.ToLower() == "yes"
+                        ? menuRecommended.OrderByDescending(item => item.isSweetTooth)
+                        : menuRecommended.OrderBy(item => item.isSweetTooth);
+
+                    var nullCheckOnDietType = sortedMenu.Where(x => x.dietType != null);
+                    if (nullCheckOnDietType != null)
+                    {
+                        sortedMenu = profile.dietType.ToLower() == "veg"
+                        ? sortedMenu.ThenByDescending(item => item.dietType)
+                        : sortedMenu.ThenBy(item => item.dietType);
+                    }
+
+                    var nullCheckOnRegionalMealChoice = sortedMenu.Where(x => x.regionalMealPreference != null);
+                    if (nullCheckOnRegionalMealChoice != null)
+                    {
+                        if (profile.regionalMealPreference.ToLower() == "north")
+                        {
+                            sortedMenu = sortedMenu.ThenBy(item => item.regionalMealPreference);
+                        }
+                        else if (profile.regionalMealPreference.ToLower() == "south")
+                        {
+                            sortedMenu = sortedMenu.ThenByDescending(item => item.regionalMealPreference == "South");
+                        }
+                    }
+                    
+                    var nullCheckOnSpiceLevel = sortedMenu.Where(x => x.SpiceLevel != null);
+                    if (nullCheckOnSpiceLevel != null)
+                    {
+                        switch (profile.SpiceLevel.ToLower())
+                        {
+                            case "high":
+                                sortedMenu = sortedMenu.ThenBy(item => item.SpiceLevel == "High" ? 0 : 1);
+                                break;
+                            case "medium":
+                                sortedMenu = sortedMenu.ThenBy(item => item.SpiceLevel == "Medium" ? 0 : 1);
+                                break;
+                            default:
+                                sortedMenu = sortedMenu.ThenBy(item => item.SpiceLevel == "Low" ? 0 : 1);
+                                break;
+                        }
+                    }
+                    menuSortedOnProfile = sortedMenu.ToList();
+                }
+                return menuSortedOnProfile;
+
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+                return new List<RolledOutItems>();
             }
         }
 
-        public async Task CastVoteAsync(string mealType, string foodName)
+        public async Task ItemsVoting(VotedItems vote)
         {
-            var date = DateOnly.FromDateTime(DateTime.Now);
-            Console.WriteLine("\nEnter your vote: ");
-            Console.WriteLine("Enter your user id: ");
-            int userId = Convert.ToInt32(Console.ReadLine());
-
-            var vote = new VotedItems
-            {
-                Date = date.ToDateTime(TimeOnly.MinValue).Date,
-                MealTypes = mealType,
-                FoodName = foodName,
-                UserId = userId
-            };
-
-            _context.VotedItems.Add(vote);
+            await _context.VotedItems.AddAsync(vote);
             await _context.SaveChangesAsync();
         }
 
@@ -169,6 +200,7 @@ namespace Domain.Repositories
                 Select(x => x.Name).ToListAsync();
             return menuItemFoodName;
         }
+
         public bool isFoodItemUnderDiscardMenu(int foodId)
         {
             var menuItems = _context.MenuItems.Where(x => x.Id == foodId && x.isItemUnderDiscardList == true).ToList();  
@@ -178,6 +210,21 @@ namespace Domain.Repositories
             }
             return false;
         }
-    }
 
+        public async Task<string> ViewMaxVotedItems(DateTime currentDate)
+        {
+            var voteItem = await _context.VotedItems
+           .Where(item => item.Date.Date == currentDate.Date)
+           .GroupBy(item => item.FoodName)
+           .Select(group => new
+           {
+               FoodName = group.Key,
+               Count = group.Count()
+           })
+           .OrderByDescending(group => group.Count)
+           .FirstOrDefaultAsync();
+
+            return $"Maximum voted item: {voteItem.FoodName}";
+        }
+    }
 }

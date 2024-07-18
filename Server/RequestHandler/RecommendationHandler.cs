@@ -33,49 +33,48 @@ namespace Server.RequestHandler
             }
             return "Unknown Request";
         }
-        public async Task RollOutItems(string request)
+        public async Task<string> RollOutItems(string request)
         {
             if (request.Contains("RollOutItems"))
             {
                 var rollOutItemsInfo = request.Split("_");
                 var rollOutIds = rollOutItemsInfo[1].Split(",");
-                await _recommendationEngineService.RollOutItems(rollOutIds);
+                var rollOutItemsString = await _recommendationEngineService.RollOutItems(rollOutIds);
+                if (rollOutItemsString!= null)
+                {
+                    return "Items Rolled out Successfully!";
+                }
+                return "Roll out Failed";
             }
+            return "Invalid Request";
         }
 
         public async Task<string> GetRolledOutItems(string request)
         {
             if (request.Contains("GetRolledOutItems"))
             {
+                var userInfo = request.Split("_")[1];   
                 DateOnly dateOnly = new DateOnly();
-                var menuItems = await _recommendationEngineService.GetRolledOutItems(dateOnly);
+                var menuItems = await _recommendationEngineService.GetRolledOutItems(userInfo, dateOnly);
                 return JsonConvert.SerializeObject(menuItems);
             }
             return "Unknown request";
         }
 
-        public async Task ItemsVoting(string request)
+        public async Task<string> ItemsVoting(string request)
         {
             if (request.Contains("ItemsVoting"))
             {
                 var itemVotingInfo = request.Split("_");
                 if (itemVotingInfo.Length > 1)
                 {
-                    var rollOutIds = itemVotingInfo[1].Split(",");
-                    var mealVotes = new Dictionary<string, string>();
-
-                    foreach (var item in rollOutIds)
-                    {
-                        var vote = item.Split(':');
-                        if (vote.Length == 2)
-                        {
-                            mealVotes[vote[0]] = vote[1];
-                        }
-                    }
-
-                    await _menuService.ItemsVoting(mealVotes);
+                    var itemVotingInfoDeserialized = JsonConvert.DeserializeObject<VotedItems>(itemVotingInfo[1]);
+                    await _menuService.ItemsVoting(itemVotingInfoDeserialized);
+                    return "Voted Successfully";
                 }
+                return "Voting Unsuccessful";
             }
+            return "Unknown request";
         }
 
         public async Task<string> CreateProfile(string request)

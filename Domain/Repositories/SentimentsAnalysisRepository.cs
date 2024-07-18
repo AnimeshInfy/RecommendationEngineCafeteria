@@ -17,7 +17,7 @@ namespace Domain.Repositories
             _context = context;
         }
 
-        public async Task CalculateSentimentScores()
+        public async Task<string> CalcSentimentScores()
         {
             var feedbacks = await _context.Feedbacks.ToListAsync();
             var goodSentiments = await _context.Sentiments
@@ -92,6 +92,7 @@ namespace Domain.Repositories
             }
 
             await _context.SaveChangesAsync();
+            return "Sentiment score calculated successfully";
         }
     }
 }

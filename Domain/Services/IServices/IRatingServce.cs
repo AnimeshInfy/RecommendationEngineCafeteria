@@ -8,6 +8,6 @@ namespace Domain.Services.IServices
 {
     public interface IRatingServce
     {
-        Task CalculateAverageRatingAsync();
+        Task<string> CalcAvgRatingAsync();
     }
 }

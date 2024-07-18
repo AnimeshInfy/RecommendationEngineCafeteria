@@ -2,6 +2,7 @@
 using Domain.ModelDTO;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using Domain.Models;
 
 namespace Server.RequestHandler
 {
@@ -9,10 +10,14 @@ namespace Server.RequestHandler
     {
         private readonly IMenuService _menuService;
         private readonly IRecommendationEngineService _recommendationEngineService;
-
-        public MenuRequestHandler(IMenuService menuService)
+        private readonly IRatingServce _ratingServce;
+        private readonly ISentimentsAnalysisService _sentimentsAnalysisService;
+        public MenuRequestHandler(IMenuService menuService, IRatingServce ratingServce, 
+            ISentimentsAnalysisService sentimentsAnalysisService)
         {
             _menuService = menuService;
+            _ratingServce = ratingServce;
+            _sentimentsAnalysisService = sentimentsAnalysisService;
         }
 
         public async Task<string> HandleRequestAsync(string request)
@@ -57,6 +62,23 @@ namespace Server.RequestHandler
             }
 
             return "Unknown Request";
+        }
+
+        public async Task<string> ViewMaxVotedItems(string request)
+        {
+            var voteItemsInfo = request.Split("_");
+            var currentDate = Convert.ToDateTime(voteItemsInfo[1]).Date;
+            return await _menuService.ViewMaxVotedItems(currentDate);
+        }
+
+        public async Task<string> CalcAvgRatingAsync(string request)
+        {
+            return await _ratingServce.CalcAvgRatingAsync();
+        }
+
+        public async Task<string> CalcSentimentScoreAsync(string request)
+        {
+            return await _sentimentsAnalysisService.CalcSentimentScoreAsync();
         }
     }
 }

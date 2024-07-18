@@ -8,17 +8,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
+using Data.ModelDTO;
+using Domain.Repositories.IRepositories;
 
 namespace Domain.Services
 {
     public class MenuService : IMenuService
     {
         private readonly IMenuItemRepository _menuItemRepository;
+        private readonly INotificationRepository _notificationRepository;
 
-        public MenuService(IMenuItemRepository menuItemRepository)
+        public MenuService(IMenuItemRepository menuItemRepository,
+            INotificationRepository notificationRepository)
         {
             _menuItemRepository = menuItemRepository;
+            _notificationRepository = notificationRepository;
         }
 
         [Authorize(Roles = "Admin")]
@@ -26,36 +30,50 @@ namespace Domain.Services
         {
             var menuItem = MapDtoToModel(menuItemDto);
             await _menuItemRepository.AddMenuItemAsync(menuItem);
+            string sendToAllUsers = "Y";
+            string message = $"{menuItem.Name} has been added to the menu!";
+            string sendNotificationrequest = $"{message}:{sendToAllUsers}";
+            await _notificationRepository.SendNotification(sendNotificationrequest);
         }
 
         [Authorize(Roles = "Admin")]
         public async Task UpdateMenuItemAsync(MenuItemDTO menuItemDto)
         {
             var menuItem = MapDtoToModel(menuItemDto);
+            string itemName = menuItem.Name;
             await _menuItemRepository.UpdateMenuItemAsync(menuItem);
+            string sendToAllUsers = "Y";
+            string message = $"{itemName} has been updated!";
+            string sendNotificationrequest = $"{message}:{sendToAllUsers}";
+            await _notificationRepository.SendNotification(sendNotificationrequest);
         }
 
         [Authorize(Roles = "Admin")]
         public async Task DeleteMenuItemAsync(int id)
         {
+            var foodName = _menuItemRepository.GetFoodItemNameById(id).ToString()[0];
             await _menuItemRepository.DeleteMenuItemAsync(id);
+            string sendToAllUsers = "Y";
+            string message = $"{foodName} has been deleted!";
+            string sendNotificationrequest = $"{message}:{sendToAllUsers}";
+            await _notificationRepository.SendNotification(sendNotificationrequest);
         }
 
-        public async Task<IEnumerable<MenuItemDTO>> GetMenuItemsAsync()
+        public async Task<IEnumerable<ViewMenuDTO>> GetMenuItemsAsync()
         {
             var menuItems = await _menuItemRepository.GetMenuItemsAsync();
-            return menuItems.Select(model => MapModelToDto(model)).ToList();
+            return menuItems.Select(model => MapViewMenuModelToDto(model)).ToList();
         }
         
-        public async Task RollOutItems(string[] rolledOutItemsIds)
+        public async Task<string> RollOutItems(string[] rolledOutItemsIds)
         {
-            await _menuItemRepository.RollOutItems(rolledOutItemsIds);
+            return await _menuItemRepository.RollOutItems(rolledOutItemsIds);
         }
 
-        public async Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItemsAsync(string noOfRecommendedItems)
+        public async Task<IEnumerable<ViewMenuDTO>> GetRecommendedMenuItemsAsync(string noOfRecommendedItems)
         {
             var menuItems = await _menuItemRepository.GetRecommendedMenuItemsAsync(noOfRecommendedItems);
-            return menuItems.Select(model => MapModelToDto(model)).ToList();
+            return menuItems.Select(model => MapViewMenuModelToDto(model)).ToList();
         }
 
         private MenuItems MapDtoToModel(MenuItemDTO dto)
@@ -79,6 +97,7 @@ namespace Domain.Services
             };
         }
 
+
         private MenuItemDTO MapModelToDto(MenuItems model)
         {
             return new MenuItemDTO
@@ -101,6 +120,17 @@ namespace Domain.Services
             };
         }
 
+        private ViewMenuDTO MapViewMenuModelToDto(MenuItems model)
+        {
+            return new ViewMenuDTO 
+            {
+                Name = model.Name,
+                Description = model.Description,
+                Price = model.Price,
+                MealType = model.MealType,
+                Id = model.Id,  
+            };
+        }
         private RolledOutItems MapDtoToModel(RolledOutItemsDTO dto)
         {
             return new RolledOutItems
@@ -110,12 +140,7 @@ namespace Domain.Services
                 RolledOutDate = DateTime.Now,
                 Description = dto.Description,
                 Price = dto.Price,
-                IsAvailable = dto.IsAvailable,
                 MealType = dto.MealType,
-                AvgRating = dto.AvgRating,
-                SentimentScore = dto.SentimentScore,
-                CommonScore = dto.CommonScore,
-                isItemUnderDiscardList = dto.isItemUnderDiscardList
             };
         }
 
@@ -128,28 +153,13 @@ namespace Domain.Services
                 RolledOutDate = DateTime.Now,
                 Description = model.Description,
                 Price = model.Price,
-                IsAvailable = model.IsAvailable,
                 MealType = model.MealType,
-                AvgRating = model.AvgRating,
-                SentimentScore = model.SentimentScore,
-                CommonScore = model.CommonScore,
-                isItemUnderDiscardList = model.isItemUnderDiscardList
             };
         }
-        public async Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems(DateOnly date)
-        {
-            var menuItems = await _menuItemRepository.GetRolledOutItems(date);
-            return menuItems.Select(model => MapModelToDto(model)).ToList();
-        }
 
-        public async Task ItemsVoting(Dictionary<string, string> mealVotes)
+        public async Task ItemsVoting(VotedItems vote)
         {
-            await _menuItemRepository.ItemsVoting(mealVotes);   
-        }
-
-        public async Task CastVoteAsync(string mealType, string foodName)
-        {
-            await _menuItemRepository.CastVoteAsync(mealType, foodName);    
+            await _menuItemRepository.ItemsVoting(vote);   
         }
 
         public async Task DeleteDiscardedMenuItemAsync(int id)
@@ -160,6 +170,17 @@ namespace Domain.Services
         public async Task ReviewDiscardList()
         {
             await _menuItemRepository.ReviewMenuItems();
+        }
+
+        public async Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems(string userInfo, DateOnly date)
+        {
+            var menuItems = await _menuItemRepository.GetRolledOutItems(userInfo, date);
+            return menuItems.Select(model => MapModelToDto(model)).ToList();
+        }
+
+        public async Task<string> ViewMaxVotedItems(DateTime currentDate)
+        {
+            return await _menuItemRepository.ViewMaxVotedItems(currentDate);
         }
     }
 }

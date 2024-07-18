@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
 using System.Threading.Tasks;
+using Data.ModelDTO;
 using Domain.ModelDTO;
+using Domain.Models;
 
 namespace Domain.Services.IServices
 {
@@ -10,12 +12,12 @@ namespace Domain.Services.IServices
         Task UpdateMenuItemAsync(MenuItemDTO menuItem);
         Task DeleteMenuItemAsync(int id);
         Task DeleteDiscardedMenuItemAsync(int id);
-        Task<IEnumerable<MenuItemDTO>> GetMenuItemsAsync();
+        Task<IEnumerable<ViewMenuDTO>> GetMenuItemsAsync();
         Task ReviewDiscardList();
-        Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItemsAsync(string noOfRecommendedItems);
-        Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems(DateOnly date);
-        Task RollOutItems(string[] rollOutIds);
-        Task ItemsVoting(Dictionary<string, string> mealVotes);
-        Task CastVoteAsync(string mealType, string foodName);
+        Task<IEnumerable<ViewMenuDTO>> GetRecommendedMenuItemsAsync(string noOfRecommendedItems);
+        Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems(string userInfo, DateOnly date);
+        Task<string> RollOutItems(string[] rollOutIds);
+        Task ItemsVoting(VotedItems vote);
+        Task<string> ViewMaxVotedItems(DateTime currentDate);
     }
 }

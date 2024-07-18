@@ -15,9 +15,10 @@ namespace Domain.Services
         {
             _sentiments = sentiments;
         }
-        public async Task CalculateSentimentsScore()
+
+        public async Task<string> CalcSentimentScoreAsync()
         {
-             await _sentiments.CalculateSentimentScores();
+            return await _sentiments.CalcSentimentScores();
         }
     }
 }

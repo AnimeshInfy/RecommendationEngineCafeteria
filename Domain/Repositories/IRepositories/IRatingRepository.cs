@@ -8,6 +8,6 @@ namespace Domain.Repositories.IRepositories
 {
     public interface IRatingRepository
     {
-        public Task CalculateAverageRatingAsync();
+        public Task<string> CalcAvgRatingAsync();
     }
 }

@@ -15,18 +15,18 @@ namespace Domain.Repositories
         public RatingRepository(CafeteriaDbContext context) 
         {
             _context = context;
-        }   
+        }
 
-        public async Task CalculateAverageRatingAsync()
+        public async Task<string> CalcAvgRatingAsync()
         {
             var feedbackGroupByItemId = await _context.Feedbacks
-                                    .GroupBy(f => f.MenuItemId)
-                                    .Select(g => new
-                                    {
-                                        MenuItemId = g.Key,
-                                        AverageRating = g.Average(f => f.Rating)
-                                    })
-                                    .ToListAsync();
+                                                .GroupBy(f => f.MenuItemId)
+                                                .Select(g => new
+                                                {
+                                                    MenuItemId = g.Key,
+                                                    AverageRating = g.Average(f => f.Rating)
+                                                })
+                                                .ToListAsync();
 
             var menuItemIds = feedbackGroupByItemId.Select(f => f.MenuItemId).ToList();
             var menuItems = await _context.MenuItems
@@ -45,6 +45,7 @@ namespace Domain.Repositories
                 }
             }
             await _context.SaveChangesAsync();
+            return "Ratings Calc Successfully";
         }
     }
         

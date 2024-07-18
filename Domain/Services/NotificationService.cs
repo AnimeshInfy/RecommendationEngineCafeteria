@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Data.ModelDTO;
 using Domain.Models;
 using Domain.Repositories;
 using Domain.Services.IServices;
@@ -52,14 +53,25 @@ namespace Domain.Services
             await _notificationRepository.SendNotification(message);
         }
 
-        public async Task<List<Notification>> ViewAllNotificationsAsync()
+        public async Task<List<NotificationDTO>> ViewAllNotificationsAsync()
         {
-            return await _notificationRepository.ViewAllNotificationsAsync();
+            IEnumerable<Notification> notifications = await _notificationRepository.ViewAllNotificationsAsync();
+            return notifications.Select(model => MapNotificationModelToDto(model)).ToList();
         }
 
-        public async Task<List<Notification>> ViewNotificationsByUserIdAsync(int viewerId)
+        public async Task<List<NotificationDTO>> ViewNotificationsByUserIdAsync(int viewerId)
         {
-            return await _notificationRepository.ViewNotificationsByUserIdAsync(viewerId);
+            IEnumerable<Notification> notifications = await _notificationRepository.ViewNotificationsByUserIdAsync(viewerId);
+            return notifications.Select(model => MapNotificationModelToDto(model)).ToList();
+        }
+
+        private NotificationDTO MapNotificationModelToDto(Notification notification)
+        {
+            return new NotificationDTO
+            {
+                Message = notification.Message,
+                NotificationDate = notification.NotificationDate,
+            };
         }
     }
 

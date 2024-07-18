@@ -26,5 +26,9 @@ namespace Domain.Models
         public double? CommonScore { get; set; }
         public bool? isItemUnderDiscardList { get; set; }
         public int? VoteCount { get; set; }
+        public string? dietType { get; set; }
+        public string? SpiceLevel { get; set; }
+        public string? regionalMealPreference { get; set; }
+        public string? isSweetTooth { get; set; }
     }
 }

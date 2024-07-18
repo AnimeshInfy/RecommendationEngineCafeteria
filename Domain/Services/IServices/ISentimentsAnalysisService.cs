@@ -8,6 +8,6 @@ namespace Domain.Services.IServices
 {
     public interface ISentimentsAnalysisService
     {
-        public Task CalculateSentimentsScore();
+        Task<string> CalcSentimentScoreAsync();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Domain.ModelDTO;
 using Newtonsoft.Json;
@@ -8,6 +9,7 @@ namespace Admin
 {
     public class Program
     {
+        private static int userId;
         public static async Task Main(string[] args)
         {
             await Task.Delay(4000);
@@ -20,7 +22,7 @@ namespace Admin
             }
             else
             {
-                Console.WriteLine("Login failed.");
+                await Login(client);
             }
 
             Console.ReadLine();
@@ -28,21 +30,29 @@ namespace Admin
 
         public static async Task<bool> Login(SocketClient client)
         {
-            UserDTO user = new UserDTO();
+            try
+            {
+                UserDTO user = new UserDTO();
+                Console.WriteLine("Enter your User Id: ");
+                user.Id = Convert.ToInt32(Console.ReadLine());
+                userId = user.Id;
+                Console.WriteLine("Enter your User name: ");
+                user.Name = Console.ReadLine();
 
-            Console.WriteLine("Enter your User Id: ");
-            user.Id = Convert.ToInt32(Console.ReadLine());
+                string jsonRequest = JsonConvert.SerializeObject(user);
+                string request = $"AdminLogin_{jsonRequest}";
 
-            Console.WriteLine("Enter your User name: ");
-            user.Name = Console.ReadLine();
+                string response = await client.CommunicateWithStreamAsync(request);
+                Console.WriteLine($"Server response: {response}");
 
-            string jsonRequest = JsonConvert.SerializeObject(user);
-            string request = $"AdminLogin_{jsonRequest}";
-
-            string response = await client.CommunicateWithStreamAsync(request);
-            Console.WriteLine($"Server response: {response}");
-
-            return response.Contains("Login");
+                return response.Contains("Login");
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("\nRe-Login:\n");
+                await Login(client);
+                return false;
+            }
         }
 
         public static async Task ShowMenu(SocketClient client)
@@ -50,7 +60,8 @@ namespace Admin
             while (true)
             {
                 Console.WriteLine("\nAdmin Menu:\n");
-                Console.WriteLine("Choose from below options: \n1. View Menu \n2. Add Item \n3. Update Item \n4. Delete Item \n5. Exit");
+                Console.WriteLine("Choose from below options: \n1. View Menu \n2. Add Item " +
+                    "\n3. Update Item \n4. Delete Item \n5. Exit");
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
@@ -86,70 +97,99 @@ namespace Admin
 
         public static async Task ViewMenu(SocketClient client)
         {
-            string request = "ViewMenu";
-            string response = await client.CommunicateWithStreamAsync(request);
-            var deserializedResponse = JsonConvert.DeserializeObject(response);
-            Console.WriteLine($"Menu: {deserializedResponse}");
+            try
+            {
+                string request = "ViewMenu";
+                string response = await client.CommunicateWithStreamAsync(request);
+                var deserializedResponse = JsonConvert.DeserializeObject(response);
+                Console.WriteLine($"Menu: {deserializedResponse}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public static async Task AddItem(SocketClient client)
         {
-            MenuItemDTO item = new MenuItemDTO();
-            Console.WriteLine("Enter item name: ");
-            item.Name = Console.ReadLine();
-            Console.WriteLine("Enter item description: ");
-            item.Description = Console.ReadLine();
-            Console.WriteLine("Enter item price: ");
-            item.Price = Convert.ToDecimal(Console.ReadLine());
-            Console.WriteLine("Is the item available? (true/false): ");
-            item.IsAvailable = Convert.ToBoolean(Console.ReadLine());
-            Console.WriteLine("Enter item meal type: ");
-            item.MealType = Console.ReadLine();
-            Console.WriteLine("Enter item diet type: ");
-            item.dietType = Console.ReadLine();
-            Console.WriteLine("Enter item spice level: ");
-            item.SpiceLevel = Console.ReadLine();
-            Console.WriteLine("Enter region-wise meal preference: ");
-            item.regionalMealPreference = Console.ReadLine();
-            Console.WriteLine("Is the item sweet (true/false): ");
-            item.isItemSweet = Console.ReadLine();
-            string jsonRequest = JsonConvert.SerializeObject(item);
-            string request = $"AddItem_{jsonRequest}";
+            try
+            {
+                MenuItemDTO item = new MenuItemDTO();
+                Console.WriteLine("Enter item name: ");
+                item.Name = Console.ReadLine();
+                Console.WriteLine("Enter item description: ");
+                item.Description = Console.ReadLine();
+                Console.WriteLine("Enter item price: ");
+                item.Price = Convert.ToDecimal(Console.ReadLine());
+                Console.WriteLine("Is the item available? (true/false): ");
+                item.IsAvailable = Convert.ToBoolean(Console.ReadLine());
+                Console.WriteLine("Enter item meal type: ");
+                item.MealType = Console.ReadLine();
+                Console.WriteLine("Enter item diet type: ");
+                item.dietType = Console.ReadLine();
+                Console.WriteLine("Enter item spice level: ");
+                item.SpiceLevel = Console.ReadLine();
+                Console.WriteLine("Enter region-wise meal preference: ");
+                item.regionalMealPreference = Console.ReadLine();
+                Console.WriteLine("Is the item sweet (true/false): ");
+                item.isItemSweet = Console.ReadLine();
+                string jsonRequest = JsonConvert.SerializeObject(item);
+                string request = $"AddItem_{jsonRequest}";
 
-            var response = await client.CommunicateWithStreamAsync(request);
-            Console.WriteLine($"Server response: {response}");
+                var response = await client.CommunicateWithStreamAsync(request);
+                Console.WriteLine($"Server response: {response}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public static async Task UpdateItem(SocketClient client)
         {
-            MenuItemDTO item = new MenuItemDTO();
-            Console.WriteLine("Enter item Id: ");
-            item.Id = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Enter updated item name: ");
-            item.Name = Console.ReadLine();
-            Console.WriteLine("Enter updated item price: ");
-            item.Price = Convert.ToDecimal(Console.ReadLine());
-            Console.WriteLine("Update Availability Status: ");
-            item.IsAvailable = Convert.ToBoolean(Console.ReadLine());
-            Console.WriteLine("Update Meal Type: ");
-            item.MealType = Console.ReadLine();
+            try
+            {
+                MenuItemDTO item = new MenuItemDTO();
+                Console.WriteLine("Enter item Id: ");
+                item.Id = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Enter updated item name: ");
+                item.Name = Console.ReadLine();
+                Console.WriteLine("Enter updated item price: ");
+                item.Price = Convert.ToDecimal(Console.ReadLine());
+                Console.WriteLine("Update Availability Status: ");
+                item.IsAvailable = Convert.ToBoolean(Console.ReadLine());
+                Console.WriteLine("Update Meal Type: ");
+                item.MealType = Console.ReadLine();
 
-            string jsonRequest = JsonConvert.SerializeObject(item);
-            string request = $"UpdateItem_{jsonRequest}";
+                string jsonRequest = JsonConvert.SerializeObject(item);
+                string request = $"UpdateItem_{jsonRequest}";
 
-            var response = await client.CommunicateWithStreamAsync(request);
-            Console.WriteLine($"Server response: {response}");
+                var response = await client.CommunicateWithStreamAsync(request);
+                Console.WriteLine($"Server response: {response}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
         }
 
         public static async Task DeleteItem(SocketClient client)
         {
-            Console.WriteLine("Enter item Id to delete: ");
-            int itemId = Convert.ToInt32(Console.ReadLine());
+            try
+            {
+                Console.WriteLine("Enter item Id to delete: ");
+                int itemId = Convert.ToInt32(Console.ReadLine());
 
-            string request = $"DeleteItem_{itemId}";
+                string request = $"DeleteItem_{itemId}";
 
-            var response = await client.CommunicateWithStreamAsync(request);
-            Console.WriteLine($"Server response: {response}");
+                var response = await client.CommunicateWithStreamAsync(request);
+                Console.WriteLine($"Server response: {response}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

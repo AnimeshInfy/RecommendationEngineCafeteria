@@ -15,9 +15,9 @@ namespace Domain.Services
             _ratingRepository = ratingRepository;
         }
 
-        public Task CalculateAverageRatingAsync()
+        public Task<string> CalcAvgRatingAsync()
         {
-            return _ratingRepository.CalculateAverageRatingAsync();
+            return _ratingRepository.CalcAvgRatingAsync();
         }
     }
 }

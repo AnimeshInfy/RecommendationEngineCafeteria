@@ -15,7 +15,6 @@ namespace Domain.Models
         public int Id { get; set; }
         [Required]
         public string FoodName { get; set; }
-        public string MealTypes { get; set; }
         [Required]
         [ForeignKey("User")]
         public int UserId { get; set; }

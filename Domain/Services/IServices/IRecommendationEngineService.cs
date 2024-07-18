@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.ModelDTO;
+using Data.Models;
 using Domain.ModelDTO;
 using Domain.Models;
 using System;
@@ -13,9 +14,9 @@ namespace Domain.Services.IServices
     {
         Task CalculateSentimentScore();
         Task CalculateAvgRating();
-        Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItems(string noOfRecommendedItems);
-        Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems(DateOnly date);
-        Task RollOutItems(string[] rollOutIds);
+        Task<IEnumerable<ViewMenuDTO>> GetRecommendedMenuItems(string noOfRecommendedItems);
+        Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems(string userInfo, DateOnly date);
+        Task<string> RollOutItems(string[] rollOutIds);
         Task CreateProfile(Profile profile);
     }
 }

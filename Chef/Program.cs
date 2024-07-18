@@ -12,34 +12,50 @@ namespace Chef
 {
     public class Program
     {
+        private static int userId;
         public static async Task Main(string[] args)
         {
             var client = new SocketClient("127.0.0.1", 8000);
             bool isLoggedIn = await Login(client);
             if(isLoggedIn)
             {
-                ShowMenu(client);
+                await ShowMenu(client);
+            }
+            else
+            {
+                await Login(client);
             }
             Console.ReadLine();
         }
 
         public static async Task<bool> Login(SocketClient client)
         {
-            UserDTO user = new UserDTO();
+            try
+            {
+                UserDTO user = new UserDTO();
 
-            Console.WriteLine("Enter your User Id: ");
-            user.Id = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Enter your User Id: ");
+                user.Id = Convert.ToInt32(Console.ReadLine());
+                userId = user.Id;
 
-            Console.WriteLine("Enter your User name: ");
-            user.Name = Console.ReadLine();
+                Console.WriteLine("Enter your User name: ");
+                user.Name = Console.ReadLine();
 
-            string jsonRequest = JsonConvert.SerializeObject(user);
-            string request = $"ChefLogin_{jsonRequest}";
+                string jsonRequest = JsonConvert.SerializeObject(user);
+                string request = $"ChefLogin_{jsonRequest}";
 
-            string response = await client.CommunicateWithStreamAsync(request);
-            Console.WriteLine($"Server response: {response}");
+                string response = await client.CommunicateWithStreamAsync(request);
+                Console.WriteLine($"Server response: {response}");
 
-            return response.Contains("Login");
+                return response.Contains("Login");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("\nRe-Login:\n");
+                await Login(client);
+                return false;
+            }
         }
         public static async Task ShowMenu(SocketClient client)
         {
@@ -50,7 +66,9 @@ namespace Chef
                     "\n2. Get List of recommended meals \n3. Roll Out Food items " +
                     "\n4. Logout \n5. View Feedbacks \n6. View Feedback by food id" +
                     "\n7. View Max voted items \n8. Send Notifications " +
-                    "\n9. Take actions on Discarded items \n10. Add to discard menu \n11. Exit");
+                    "\n9. Take actions on Discarded items \n10. Add to discard menu " +
+                    "\n11. Calculate Average Rating \n12. Calculate Sentiment Scores " +
+                    "\n13. Exit");
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
@@ -73,7 +91,7 @@ namespace Chef
                         ViewFeedbacksById(client);
                         break;
                     case "7":
-                        //View max voted items
+                        ViewMaxVotedItems(client);
                         break;
                     case "8":
                         SendNotifications(client);
@@ -85,6 +103,12 @@ namespace Chef
                         AddToDiscardMenu(client);
                         break;
                     case "11":
+                        CalcAvgRating(client);
+                        break;
+                    case "12":
+                        CalcSentimentScore(client);
+                        break;
+                    case "13":
                         Environment.Exit(0);
                         return;
                     default:
@@ -192,5 +216,26 @@ namespace Chef
             string request = $"ReviewMenuItems";
             string response = await client.CommunicateWithStreamAsync(request); 
         }
+        private static async void ViewMaxVotedItems(SocketClient client)
+        {
+            var currentDate = DateTime.Now.Date;
+            string request = $"ViewMaxVotedItems_{currentDate}";
+            string response = await client.CommunicateWithStreamAsync(request);
+            await Console.Out.WriteLineAsync(response);
+        }
+        private static async void CalcAvgRating(SocketClient client)
+        {
+            string request = $"CalcAvgRating";
+            string response = await client.CommunicateWithStreamAsync(request);
+            Console.WriteLine(response);
+        }
+        private static async void CalcSentimentScore(SocketClient client)
+        {
+            string request = $"CalcSentimentScore";
+            string response = await client.CommunicateWithStreamAsync(request);
+            Console.WriteLine(response);
+        }
+
+
     }
 }

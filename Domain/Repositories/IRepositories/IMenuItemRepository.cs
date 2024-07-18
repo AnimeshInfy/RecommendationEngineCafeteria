@@ -13,14 +13,12 @@ namespace Domain.Repositories
         Task DeleteMenuItemAsync(int id);
         Task DeleteDiscardedMenuItemAsync(int id);
         Task<IEnumerable<MenuItems>> GetRecommendedMenuItemsAsync(string noOfRecommendedItems);
-        Task<IEnumerable<RolledOutItems>> GetRolledOutItems(DateOnly date);
-        Task RollOutItems(string[] rollOutIds);
-        Task ItemsVoting(Dictionary<string, string> mealVotes);
-        Task CastVoteAsync(string mealType, string foodName);
+        Task<IEnumerable<RolledOutItems>> GetRolledOutItems(string userInfo, DateOnly date);
+        Task<string> RollOutItems(string[] rollOutIds);
+        Task ItemsVoting(VotedItems vote);
         Task ReviewMenuItems();
         Task<List<string>> GetFoodItemNameById(int foodId);
         bool isFoodItemUnderDiscardMenu(int foodId);
-
-
+        Task<string> ViewMaxVotedItems(DateTime currentDate);
     }
 }

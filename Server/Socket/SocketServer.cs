@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Data.ModelDTO;
+using Domain.Models;
 using Domain.Services.IServices;
 using Server.RequestHandler;
 using System.Net;
@@ -19,18 +20,23 @@ public class SocketServer
     private IRecommendationEngineService _recommendationEngineService;
     private RecommendationHandler _recommendationHandler;
     private NotificationHandler _notificationHandler;
+    private IRatingServce _ratingServce;
+    private ISentimentsAnalysisService _sentimentsAnalysisService;
 
     public SocketServer(IUserService userService, IMenuService menuService, 
         IFeedbackService feedbackService, IRecommendationEngineService recommendationEngineService,
-        INotificationService notificationService)
+        INotificationService notificationService, IRatingServce ratingServce,
+        ISentimentsAnalysisService sentimentsAnalysisService)
     {
         _userService = userService;
         _menuService = menuService;
         _feedbackService = feedbackService;
-        _recommendationEngineService = recommendationEngineService;
         _notificationService = notificationService;
+        _ratingServce = ratingServce;
+        _sentimentsAnalysisService = sentimentsAnalysisService;
+        _recommendationEngineService = recommendationEngineService;
         _loginRequestHandler = new LoginRequestHandler(_userService);
-        _menuHandler = new MenuRequestHandler(_menuService);
+        _menuHandler = new MenuRequestHandler(_menuService, _ratingServce, _sentimentsAnalysisService);
         _recommendationHandler = new RecommendationHandler(_recommendationEngineService, _menuService);
         _feedbackHandler = new FeedbackRequestHandler(_feedbackService, _notificationService, _menuService);
         _notificationHandler = new NotificationHandler(_notificationService);
@@ -111,8 +117,7 @@ public class SocketServer
 
         if (request.Contains("RollOutItems"))
         {
-            await HandleRollOutItemsAsync(request);
-            return "Items rolled out";
+            return await HandleRollOutItemsAsync(request);
         }
 
         if (request.Contains("GetRolledOutItems"))
@@ -122,7 +127,7 @@ public class SocketServer
 
         if (request.Contains("ItemsVoting"))
         {
-            await HandleItemsVotingAsync(request);
+            return await HandleItemsVotingAsync(request);
         }
 
         if (request.Contains("SendMessage"))
@@ -137,7 +142,7 @@ public class SocketServer
 
         if (request.Contains("ViewNotificationsById"))
         {
-            return await HandleViewNotificationsByIdAsync(request);
+           return await HandleViewNotificationsByIdAsync(request);
         }
 
         if (request.Contains("DeleteItemsFromDiscardList"))
@@ -164,8 +169,20 @@ public class SocketServer
         {
             return await HandleCreateProfileAsync(request);
         }
-
+        if (request.Contains("ViewMaxVotedItems"))
+        {
+            return await HandleViewMaxVotedItemsAsync(request);
+        }
+        if (request.Contains("CalcAvgRating") || request.Contains("CalcSentimentScore"))
+        {
+            return await HandleCalcAvgRatingAsync(request);
+        }
         return "Unknown request";
+    }
+
+    private async Task<string> HandleViewMaxVotedItemsAsync(string request)
+    {
+        return await _menuHandler.ViewMaxVotedItems(request);
     }
 
     private async Task<string> HandleLoginRequestAsync(string request)
@@ -188,9 +205,9 @@ public class SocketServer
         return await _recommendationHandler.GetRecommendedMeals(request);
     }
 
-    private async Task HandleRollOutItemsAsync(string request)
+    private async Task<string> HandleRollOutItemsAsync(string request)
     {
-        await _recommendationHandler.RollOutItems(request);
+        return await _recommendationHandler.RollOutItems(request);
     }
 
     private async Task<string> HandleGetRolledOutItemsAsync(string request)
@@ -198,9 +215,9 @@ public class SocketServer
         return await _recommendationHandler.GetRolledOutItems(request);
     }
 
-    private async Task HandleItemsVotingAsync(string request)
+    private async Task<string> HandleItemsVotingAsync(string request)
     {
-        await _recommendationHandler.ItemsVoting(request);
+        return await _recommendationHandler.ItemsVoting(request);
     }
 
     private async Task<string> HandleSendMessageAsync(string request)
@@ -243,5 +260,16 @@ public class SocketServer
     {
         return await _recommendationHandler.CreateProfile(request);
     }
-
+    private async Task<string> HandleCalcAvgRatingAsync(string request)
+    {
+        if (request == "CalcAvgRating")
+        {
+            return await _menuHandler.CalcAvgRatingAsync(request);
+        }
+        else if (request == "CalcSentimentScore")
+        {
+            return await _menuHandler.CalcSentimentScoreAsync(request);
+        }
+        return "Unknown Request";
+    }
 }

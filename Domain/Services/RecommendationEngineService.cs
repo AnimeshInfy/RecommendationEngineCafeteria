@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.ModelDTO;
+using Data.Models;
 using Domain.ModelDTO;
 using Domain.Models;
 using Domain.Services.IServices;
@@ -28,12 +29,12 @@ namespace Domain.Services
 
         public async Task CalculateAvgRating()
         {
-            await _ratingService.CalculateAverageRatingAsync();
+            await _ratingService.CalcAvgRatingAsync();
         }
 
         public async Task CalculateSentimentScore()
         {
-            await _sentimentService.CalculateSentimentsScore();
+            await _sentimentService.CalcSentimentScoreAsync();
         }
 
         public async Task CreateProfile(Profile profile)
@@ -41,21 +42,21 @@ namespace Domain.Services
              await _userService.CreateProfile(profile);
         }
 
-        public async Task<IEnumerable<MenuItemDTO>> GetRecommendedMenuItems(string noOfRecommendedItems)
+        public async Task<IEnumerable<ViewMenuDTO>> GetRecommendedMenuItems(string noOfRecommendedItems)
         {
             await CalculateAvgRating();
             await CalculateSentimentScore();
             return await _menuService.GetRecommendedMenuItemsAsync(noOfRecommendedItems);
         }
 
-        public Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems(DateOnly date)
+        public Task<IEnumerable<RolledOutItemsDTO>> GetRolledOutItems(string userInfo, DateOnly date)
         {
-            return _menuService.GetRolledOutItems(date);
+            return _menuService.GetRolledOutItems(userInfo, date);
         }
 
-        public async Task RollOutItems(string[] rollOutIds)
+        public async Task<string> RollOutItems(string[] rollOutIds)
         {
-            await _menuService.RollOutItems(rollOutIds);
+            return await _menuService.RollOutItems(rollOutIds);
         }
     }
 }

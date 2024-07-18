@@ -27,13 +27,27 @@ namespace Server.RequestHandler
         {
             var notificationInfo = request.Split("_");
             var notificationsById = await _notificationService.ViewNotificationsByUserIdAsync(Convert.ToInt32(notificationInfo[1]));
-            var notificationJs = JsonConvert.SerializeObject(notificationsById);    
-            return notificationJs;
+            string result = "";
+
+            foreach (var notification in notificationsById)
+            {
+                result += ($"{notification.NotificationDate.ToString("yyyy-MM-dd HH:mm:ss")}: {notification.Message}\n");
+            }
+
+            return result;
+
         }
         public async Task<string> ViewNotifications(string request)
         {
             var notifications =  await _notificationService.ViewAllNotificationsAsync();
-            return JsonConvert.SerializeObject(notifications);
+            string result = "";
+
+            foreach (var notification in notifications)
+            {
+                result += ($"{notification.NotificationDate.ToString("yyyy-MM-dd HH:mm:ss")}: {notification.Message}\n");
+            }
+
+            return result;
         }
     }
 }
