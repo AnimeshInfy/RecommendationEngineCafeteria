@@ -223,8 +223,17 @@ namespace Domain.Repositories
            })
            .OrderByDescending(group => group.Count)
            .FirstOrDefaultAsync();
+            if (voteItem != null)
+            {
+                return $"Maximum voted item: {voteItem.FoodName}";
+            }
+            return "No item voted yet";
+        }
 
-            return $"Maximum voted item: {voteItem.FoodName}";
+        public Task<List<MenuItems>> GetDiscardedMenu()
+        {
+            var discardedMenu = _context.MenuItems.Where(x => x.isItemUnderDiscardList == true).ToListAsync();
+            return discardedMenu;
         }
     }
 }

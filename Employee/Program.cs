@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.ModelDTO;
+using Data.Models;
 using Domain.ModelDTO;
 using Domain.Models;
 using Newtonsoft.Json;
@@ -71,7 +72,7 @@ namespace Employee
                 switch (choice)
                 {
                     case "1":
-                        ViewMenu(client);
+                        await ViewMenu(client);
                         break;
                     case "2":
                         GetItemsRolledOutByChef(client);
@@ -80,16 +81,16 @@ namespace Employee
                         VoteForMeals(client);
                         break;
                     case "4":
-                        ProvideFeedback(client);
+                        await ProvideFeedback(client);
                         break;
                     case "5":
-                        ViewNotifications(client);
+                        await ViewNotifications(client);
                         break;
                     case "6":
-                        ViewNotificationsByUserId(client);
+                        await ViewNotificationsByUserId(client);
                         break;
                     case "7":
-                        GiveDetailedFeedbackForDiscardedItems(client);
+                        await GiveDetailedFeedbackForDiscardedItems(client);
                         break;
                     case "8":
                         CreateProfile(client);
@@ -183,8 +184,9 @@ namespace Employee
             {
                 string request = "ViewMenu";
                 string response = await client.CommunicateWithStreamAsync(request);
-                var deserializedResponse = JsonConvert.DeserializeObject(response);
-                Console.WriteLine($"Menu: {deserializedResponse}");
+                List<ViewMenuDTO> menu = JsonConvert.DeserializeObject<List<ViewMenuDTO>>(response);
+                ConvertToTable(menu);
+
             }
             catch (Exception ex)
             {
@@ -204,6 +206,8 @@ namespace Employee
                 string request = $"ViewNotifications";
                 string response = await client.CommunicateWithStreamAsync(request);
                 Console.WriteLine(response);
+                List<NotificationDTO> notifications = JsonConvert.DeserializeObject<List<NotificationDTO>>(response);
+                ConvertToTable(notifications);
             }
             catch (Exception ex)
             {
@@ -214,10 +218,13 @@ namespace Employee
         {
             try
             {
-                Console.WriteLine("Enter your User Id: \n");
                 string request = $"ViewNotificationsById_{userId}";
                 string response = await client.CommunicateWithStreamAsync(request);
-                Console.WriteLine(response);
+                if (response != null)
+                {
+                    Console.WriteLine(response);
+                }
+                Console.WriteLine($"No more active notifications for User id: {userId}");
             }
             catch (Exception ex)
             {
@@ -239,7 +246,7 @@ namespace Employee
                 Console.WriteLine(ex.Message);
             }
         }
-        private static async  void CreateProfile(SocketClient client)
+        private static async void CreateProfile(SocketClient client)
         {
             try
             {
@@ -264,6 +271,32 @@ namespace Employee
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        private static void ConvertToTable(List<ViewMenuDTO> response)
+        {
+            Console.WriteLine(new string('-', 110));
+            Console.WriteLine("{0,-3} | {1,-25} | {2,-50} | {3,-8} | {4,-8}", "Id", "Name", "Description", "Price", "MealType");
+            Console.WriteLine(new string('-', 110));
+
+            foreach (var item in response)
+            {
+                Console.WriteLine("{0,-3} | {1,-25} | {2,-50} | {3,-8} | {4,-8}", item.Id, item.Name, item.Description, item.Price, item.MealType);
+            }
+            Console.WriteLine(new string('-', 110));
+        }
+
+        private static void ConvertToTable(List<NotificationDTO> response)
+        {
+            Console.WriteLine(new string('-', 60));
+            Console.WriteLine("{0,-40} | {1,-25}", "Message", "Date");
+            Console.WriteLine(new string('-', 110));
+
+            foreach (var item in response)
+            {
+                Console.WriteLine("{0,40} | {1,25}", item.Message, item.NotificationDate);
+            }
+            Console.WriteLine(new string('-', 110));
         }
     }
 }

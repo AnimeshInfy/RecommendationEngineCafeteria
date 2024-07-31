@@ -1,4 +1,5 @@
-﻿using Domain.ModelDTO;
+﻿using Data.ModelDTO;
+using Domain.ModelDTO;
 using Domain.Models;
 using Newtonsoft.Json;
 using Server;
@@ -47,7 +48,7 @@ namespace Chef
                 string response = await client.CommunicateWithStreamAsync(request);
                 Console.WriteLine($"Server response: {response}");
 
-                return response.Contains("Login");
+                return true;
             }
             catch (Exception ex)
             {
@@ -118,39 +119,41 @@ namespace Chef
             }
         }
 
-        private static async void ViewAllFeedbacks(SocketClient client)
+        private static async Task ViewAllFeedbacks(SocketClient client)
         {
             string request = "ViewFeedbacks";
             string response = await client.CommunicateWithStreamAsync(request);
-            var deserializedResponse = JsonConvert.DeserializeObject(response);
-            Console.WriteLine($"Feedbacks: {deserializedResponse}");
+            List<FeedbackDTO> feedback = JsonConvert.DeserializeObject<List<FeedbackDTO>>(response);
+            ConvertToTable(feedback);
         }
 
-        private static async void ViewFeedbacksById(SocketClient client)
+        private static async Task ViewFeedbacksById(SocketClient client)
         {
             Console.WriteLine("Enter the food id for which you want to see the feedback");
             int foodId = Convert.ToInt32(Console.ReadLine());
             string request = $"ViewFeedbacksById_{foodId}";
             string response = await client.CommunicateWithStreamAsync(request);
-            var deserializedResponse = JsonConvert.DeserializeObject(response);
-            Console.WriteLine($"Feedbacks: {deserializedResponse}");
+            List<FeedbackDTO> feedback = JsonConvert.DeserializeObject<List<FeedbackDTO>>(response);
+            ConvertToTable(feedback);
         }
 
         public static async Task ViewMenu(SocketClient client)
         {
             string request = "ViewMenu";
             string response = await client.CommunicateWithStreamAsync(request);
-            var deserializedResponse = JsonConvert.DeserializeObject(response);
-            Console.WriteLine($"Menu: {deserializedResponse}");
+            List<ViewMenuDTO> menu = JsonConvert.DeserializeObject<List<ViewMenuDTO>>(response);
+            ConvertToTable(menu);
         }
-        public static async void GetRecommmendedItems(SocketClient client)
+        public static async Task GetRecommmendedItems(SocketClient client)
         {
             Console.WriteLine("\nEnter the number of items you want to fetch from Recommnendation Engine:");
             var noOfRecommendedItems = Console.ReadLine();
             string request = $"GetRecommendedMeals_{noOfRecommendedItems}";
-            string response = await client.CommunicateWithStreamAsync(request);   
-            var deserializedResponse = JsonConvert.DeserializeObject(response);
-            Console.WriteLine($"Top Recommmended Meals: {deserializedResponse}");
+            string response = await client.CommunicateWithStreamAsync(request);
+            List<ViewMenuDTO> recommendedMenu = JsonConvert.DeserializeObject<List<ViewMenuDTO>>(response);
+            Console.WriteLine($"Top Recommmended Meals:");
+            ConvertToTable(recommendedMenu);
+
         }
         public static async void RollOutItems(SocketClient client)
         {
@@ -190,7 +193,8 @@ namespace Chef
         public static async void TakeActionOnDiscardedMenu(SocketClient client)
         {
             Console.WriteLine("\nDiscarded Menu List: \n");
-            //GET DISCARDED MENU
+            var discardedMenuJson = GetDiscardedMenuAsync(client);
+            Console.WriteLine($"{discardedMenuJson}");
             Console.WriteLine("Press 1 for getting detailed feedback\n");
             Console.WriteLine("Press 2 for deleting the items from menu\n");
             string action = Console.ReadLine();
@@ -236,6 +240,37 @@ namespace Chef
             Console.WriteLine(response);
         }
 
+        private static async Task GetDiscardedMenuAsync(SocketClient client)
+        {
+            string request = "$GetDiscardedMenu";
+            string response = await client.CommunicateWithStreamAsync(request);
+            List<ViewMenuDTO> discardedMenu = JsonConvert.DeserializeObject<List<ViewMenuDTO>>(response);
+            ConvertToTable(discardedMenu);
+        }
 
+        private static void ConvertToTable(List<FeedbackDTO> response)
+        {
+            Console.WriteLine(new string('-', 100));
+            Console.WriteLine("{0,-10} | {1,-10} | {2,-40} | {3,-6} | {4,-25}", "Menu ID", "User ID", "Comment", "Rating", "Date");
+            Console.WriteLine(new string('-', 100));
+
+            foreach (var item in response)
+            {
+                Console.WriteLine("{0,-10} | {1,-10} | {2,-40} | {3,-6} | {4,-25}", item.MenuItemId, item.UserId, item.Comment, item.Rating, item.Date);
+            }
+            Console.WriteLine(new string('-', 110));
+        }
+        private static void ConvertToTable(List<ViewMenuDTO> response)
+        {
+            Console.WriteLine(new string('-', 110));
+            Console.WriteLine("{0,-3} | {1,-25} | {2,-50} | {3,-8} | {4,-8}", "Id", "Name", "Description", "Price", "MealType");
+            Console.WriteLine(new string('-', 110));
+
+            foreach (var item in response)
+            {
+                Console.WriteLine("{0,-3} | {1,-25} | {2,-50} | {3,-8} | {4,-8}", item.Id, item.Name, item.Description, item.Price, item.MealType);
+            }
+            Console.WriteLine(new string('-', 110));
+        }
     }
 }

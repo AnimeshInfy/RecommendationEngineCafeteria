@@ -80,5 +80,10 @@ namespace Server.RequestHandler
         {
             return await _sentimentsAnalysisService.CalcSentimentScoreAsync();
         }
+        public async Task<string> GetDiscardedMenu(string request)
+        {
+            var discardedMenu = await _menuService.GetDiscardedMenu();
+            return JsonConvert.SerializeObject(discardedMenu);
+        }
     }
 }

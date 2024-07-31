@@ -20,5 +20,6 @@ namespace Domain.Repositories
         Task<List<string>> GetFoodItemNameById(int foodId);
         bool isFoodItemUnderDiscardMenu(int foodId);
         Task<string> ViewMaxVotedItems(DateTime currentDate);
+        Task<List<MenuItems>> GetDiscardedMenu();
     }
 }

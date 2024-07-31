@@ -75,7 +75,12 @@ namespace Domain.Repositories
                 var targetId = targetIds[iterator].Split(",");
                 if (targetId.Contains(viewerIdstr))
                 {
-                    notificationsById.Add(notifications[iterator]);  
+                    if (notifications[iterator].isRead is false || notifications[iterator].isRead is null)
+                    {
+                        notificationsById.Add(notifications[iterator]);
+                        notifications[iterator].isRead = true;
+                        await _context.SaveChangesAsync();
+                    }
                 }
             }
             return notificationsById;   

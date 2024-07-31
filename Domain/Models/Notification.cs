@@ -19,5 +19,6 @@ namespace Domain.Models
         public string Message { get; set; }
         [Required]
         public DateTime NotificationDate { get; set; }
+        public bool? isRead { get; set; }    
     }
 }

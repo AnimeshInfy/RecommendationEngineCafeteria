@@ -182,5 +182,10 @@ namespace Domain.Services
         {
             return await _menuItemRepository.ViewMaxVotedItems(currentDate);
         }
+
+        public async Task<List<MenuItems>> GetDiscardedMenu()
+        {
+            return await _menuItemRepository.GetDiscardedMenu();
+        }
     }
 }

@@ -19,5 +19,6 @@ namespace Domain.Services.IServices
         Task<string> RollOutItems(string[] rollOutIds);
         Task ItemsVoting(VotedItems vote);
         Task<string> ViewMaxVotedItems(DateTime currentDate);
+        Task<List<MenuItems>> GetDiscardedMenu();
     }
 }

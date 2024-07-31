@@ -15,7 +15,7 @@ public class SocketServer
     private FeedbackRequestHandler _feedbackHandler;
     private IUserService _userService;
     private IMenuService _menuService;
-    private INotificationService _notificationService;  
+    private INotificationService _notificationService;
     private IFeedbackService _feedbackService;
     private IRecommendationEngineService _recommendationEngineService;
     private RecommendationHandler _recommendationHandler;
@@ -23,7 +23,7 @@ public class SocketServer
     private IRatingServce _ratingServce;
     private ISentimentsAnalysisService _sentimentsAnalysisService;
 
-    public SocketServer(IUserService userService, IMenuService menuService, 
+    public SocketServer(IUserService userService, IMenuService menuService,
         IFeedbackService feedbackService, IRecommendationEngineService recommendationEngineService,
         INotificationService notificationService, IRatingServce ratingServce,
         ISentimentsAnalysisService sentimentsAnalysisService)
@@ -142,7 +142,7 @@ public class SocketServer
 
         if (request.Contains("ViewNotificationsById"))
         {
-           return await HandleViewNotificationsByIdAsync(request);
+            return await HandleViewNotificationsByIdAsync(request);
         }
 
         if (request.Contains("DeleteItemsFromDiscardList"))
@@ -175,7 +175,11 @@ public class SocketServer
         }
         if (request.Contains("CalcAvgRating") || request.Contains("CalcSentimentScore"))
         {
-            return await HandleCalcAvgRatingAsync(request);
+            return await HandleCalcAvgScoresAsync(request);
+        }
+        if (request.Contains("$GetDiscardedMenu"))
+        {
+            return await HandleGetDiscardMenuAsync(request);
         }
         return "Unknown request";
     }
@@ -260,7 +264,7 @@ public class SocketServer
     {
         return await _recommendationHandler.CreateProfile(request);
     }
-    private async Task<string> HandleCalcAvgRatingAsync(string request)
+    private async Task<string> HandleCalcAvgScoresAsync(string request)
     {
         if (request == "CalcAvgRating")
         {
@@ -271,5 +275,9 @@ public class SocketServer
             return await _menuHandler.CalcSentimentScoreAsync(request);
         }
         return "Unknown Request";
+    }
+    private async Task<string> HandleGetDiscardMenuAsync(string request)
+    {
+        return await _menuHandler.GetDiscardedMenu(request);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Data.ModelDTO;
 using Domain.ModelDTO;
 using Newtonsoft.Json;
 using Server;
@@ -101,8 +102,8 @@ namespace Admin
             {
                 string request = "ViewMenu";
                 string response = await client.CommunicateWithStreamAsync(request);
-                var deserializedResponse = JsonConvert.DeserializeObject(response);
-                Console.WriteLine($"Menu: {deserializedResponse}");
+                List<ViewMenuDTO> menu = JsonConvert.DeserializeObject<List<ViewMenuDTO>>(response);
+                ConvertToTable(menu);
             }
             catch (Exception ex)
             {
@@ -190,6 +191,18 @@ namespace Admin
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+        private static void ConvertToTable(List<ViewMenuDTO> response)
+        {
+            Console.WriteLine(new string('-', 110));
+            Console.WriteLine("{0,-3} | {1,-25} | {2,-50} | {3,-8} | {4,-8}", "Id", "Name", "Description", "Price", "MealType");
+            Console.WriteLine(new string('-', 110));
+
+            foreach (var item in response)
+            {
+                Console.WriteLine("{0,-3} | {1,-25} | {2,-50} | {3,-8} | {4,-8}", item.Id, item.Name, item.Description, item.Price, item.MealType);
+            }
+            Console.WriteLine(new string('-', 110));
         }
     }
 }
