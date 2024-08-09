@@ -26,13 +26,13 @@ namespace Server
         public async Task<string> CommunicateWithStreamAsync(string message)
         {
             const int bufferLength = 4096;
-            byte[] data = Encoding.ASCII.GetBytes(message);
+            byte[] data = Encoding.UTF8.GetBytes(message);
             await _stream.WriteAsync(data, 0, data.Length);
 
             byte[] buffer = new byte[bufferLength];
             int bytesRead = await _stream.ReadAsync(buffer, 0, buffer.Length);
 
-            return Encoding.ASCII.GetString(buffer, 0, bytesRead);
+            return Encoding.UTF8.GetString(buffer, 0, bytesRead);
         }
 
         public void Dispose()

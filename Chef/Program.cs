@@ -157,13 +157,20 @@ namespace Chef
         }
         public static async void RollOutItems(SocketClient client)
         {
-            Console.WriteLine("\nEnter the Item Id(s) which you want to roll out for next day:");
-            string itemIds = Console.ReadLine();
-            string[] itemIdsArray = itemIds.Split(',');
-            List<int> itemIdsInt = itemIdsArray.Select(int.Parse).ToList();
+            try
+            {
+                Console.WriteLine("\nEnter the Item Id(s) which you want to roll out for next day:");
+                string itemIds = Console.ReadLine();
+                string[] itemIdsArray = itemIds.Split(',');
+                List<int> itemIdsInt = itemIdsArray.Select(int.Parse).ToList();
 
-            string request = $"RollOutItems_{itemIds}";
-            string response = await client.CommunicateWithStreamAsync(request);
+                string request = $"RollOutItems_{itemIds}";
+                string response = await client.CommunicateWithStreamAsync(request);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+            }
         }
         static void Logout(SocketClient client)
         {
@@ -172,47 +179,61 @@ namespace Chef
         }
         public static async void SendNotifications(SocketClient client)
         {
-            Console.WriteLine("\nPlease write the message you want to convey to Users\n");
-            string message = Console.ReadLine();
-            Console.WriteLine("Enter the target users for receving the notification: \n");
-            Console.WriteLine("If you want to send notifications to all users, press Y\n");
-            string sendToAllUsers = Console.ReadLine();
-            string request = "";
-            if (sendToAllUsers.ToLower() == "y")
+            try
             {
-                request = $"SendMessage_{message}:{sendToAllUsers}";
+                Console.WriteLine("\nPlease write the message you want to convey to Users\n");
+                string message = Console.ReadLine();
+                Console.WriteLine("Enter the target users for receving the notification: \n");
+                Console.WriteLine("If you want to send notifications to all users, press Y\n");
+                string sendToAllUsers = Console.ReadLine();
+                string request = "";
+                if (sendToAllUsers.ToLower() == "y")
+                {
+                    request = $"SendMessage_{message}:{sendToAllUsers}";
+                }
+                else
+                {
+                    await Console.Out.WriteLineAsync("\nEnter the targeted user Ids in Comma seperated value format: \n");
+                    string targetedUserIds = Console.ReadLine();
+                    request = $"SendMessage_{message}:{sendToAllUsers}-{targetedUserIds}";
+                }
+                string response = await client.CommunicateWithStreamAsync(request);
             }
-            else
+            catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync("\nEnter the targeted user Ids in Comma seperated value format: \n");
-                string targetedUserIds = Console.ReadLine();
-                request = $"SendMessage_{message}:{sendToAllUsers}-{targetedUserIds}";
+                await Console.Out.WriteLineAsync(ex.Message);
             }
-            string response = await client.CommunicateWithStreamAsync(request);
         }
         public static async void TakeActionOnDiscardedMenu(SocketClient client)
         {
-            Console.WriteLine("\nDiscarded Menu List: \n");
-            var discardedMenuJson = GetDiscardedMenuAsync(client);
-            Console.WriteLine($"{discardedMenuJson}");
-            Console.WriteLine("Press 1 for getting detailed feedback\n");
-            Console.WriteLine("Press 2 for deleting the items from menu\n");
-            string action = Console.ReadLine();
-            string request = "DeleteItemsFromDiscardedList";
-            if (action == "1")
+            try
             {
-                await Console.Out.WriteLineAsync("Enter the food id for which you want detailed feedback\n");
-                string foodId = Console.ReadLine();
-                request = $"GetDetailedfeedbackonfoodItem_{foodId}";
-            }
-            else
-            {
-                await Console.Out.WriteLineAsync("Enter Food id of item which you want to remove:\n");
-                string foodId = Console.ReadLine();
-                request = $"DeleteItemsFromDiscardList_{foodId}";
-            }
+                Console.WriteLine("\nDiscarded Menu List: \n");
+                var discardedMenuJson = GetDiscardedMenuAsync(client);
+                Console.WriteLine($"{discardedMenuJson}");
+                Console.WriteLine("Press 1 for getting detailed feedback\n");
+                Console.WriteLine("Press 2 for deleting the items from menu\n");
+                string action = Console.ReadLine();
+                string request = "DeleteItemsFromDiscardedList";
+                if (action == "1")
+                {
+                    await Console.Out.WriteLineAsync("Enter the food id for which you want detailed feedback\n");
+                    string foodId = Console.ReadLine();
+                    request = $"GetDetailedfeedbackonfoodItem_{foodId}";
+                }
+                else
+                {
+                    await Console.Out.WriteLineAsync("Enter Food id of item which you want to remove:\n");
+                    string foodId = Console.ReadLine();
+                    request = $"DeleteItemsFromDiscardList_{foodId}";
+                }
 
-            string response = await client.CommunicateWithStreamAsync(request);
+                string response = await client.CommunicateWithStreamAsync(request);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+            }
         }
 
         private static async void AddToDiscardMenu(SocketClient client)

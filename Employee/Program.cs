@@ -120,7 +120,7 @@ namespace Employee
                 feedback.MenuItemId = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("\nEnter feedback message:");
                 feedback.Comment = Console.ReadLine();
-                Console.WriteLine("\nEnter Rating: ");
+                Console.WriteLine("\nEnter Rating (1-5): ");
                 feedback.Rating = Convert.ToInt32(Console.ReadLine());
 
                 string jsonRequest = JsonConvert.SerializeObject(feedback);
@@ -164,12 +164,10 @@ namespace Employee
         {
             try
             {
-                await Console.Out.WriteLineAsync("Enter your user id so that you get " +
-                        "recommendations based on your profile");
                 string request = $"GetRolledOutItems_{userId}";
                 string response = await client.CommunicateWithStreamAsync(request);
-                var deserializedResponse = JsonConvert.DeserializeObject(response);
-                Console.WriteLine($"Rolled Out Menu: {deserializedResponse}");
+                List<ViewMenuDTO> menu = JsonConvert.DeserializeObject<List<ViewMenuDTO>>(response);
+                ConvertToTable(menu);
             }
             catch (Exception ex)
             {
